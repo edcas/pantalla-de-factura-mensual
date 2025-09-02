@@ -9,24 +9,34 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f9fafb;
         }
-        .sidebar-link-active {
-            background-color: #0c4a6e;
-            color: #ffffff;
-            font-weight: 600;
-        }
-        .sidebar-link.text-gray-700:hover {
-            background-color: #f3f4f6;
-        }
-        .sidebar-link-active:hover {
-            background-color: #0c4a6e;
-        }
+        /* --- Estilos Vista Cliente --- */
+        .client-view { background-color: #f9fafb; }
+        .sidebar-client { border-right-width: 1px; }
+        .sidebar-client-header { border-bottom-width: 1px; }
+        .sidebar-client-footer { border-top-width: 1px; }
+        .sidebar-link-active { background-color: #0c4a6e; color: #ffffff; font-weight: 600; }
+        .sidebar-link.text-gray-700:hover { background-color: #f3f4f6; }
+        .sidebar-link-active:hover { background-color: #0c4a6e; }
+        
+        /* --- Estilos Vista Admin (ERP) --- */
+        .admin-view { background-color: #111827; color: #d1d5db; }
+        .sidebar-admin { background-color: #1f2937; border-right: 1px solid #374151; }
+        .sidebar-admin-header { border-bottom: 1px solid #374151; }
+        .sidebar-admin-footer { border-top: 1px solid #374151; }
+        .sidebar-admin .sidebar-link { color: #d1d5db; }
+        .sidebar-admin .sidebar-link-active { background-color: #374151; color: #ffffff; }
+        .sidebar-admin .sidebar-link:hover:not(.sidebar-link-active) { background-color: #374151; }
+        .admin-header { background-color: #1f2937; border-bottom: 1px solid #374151; }
+        .admin-table { background-color: #1f2937; }
+        .admin-table th { color: #9ca3af; }
+        .admin-table tbody tr { border-color: #374151; }
+
+        /* --- Estilos Modales (común) --- */
         .modal-backdrop {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background-color: rgba(17, 24, 39, 0.6);
-            display: flex;
-            justify-content: center; align-items: center; z-index: 50;
+            display: flex; justify-content: center; align-items: center; z-index: 50;
             backdrop-filter: blur(4px);
         }
         .modal-content {
@@ -34,41 +44,79 @@
             max-width: 90%; width: 500px; max-height: 90vh; overflow-y: auto;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
         }
+        /* Switch styles */
+        .switch-bg { background-color: #e5e7eb; }
+        input:checked + .switch-bg { background-color: #4f46e5; }
+        input:checked + .switch-bg .dot { transform: translateX(100%); }
+        .dot { transition: transform 0.3s ease-in-out; }
     </style>
 </head>
-<body class="text-gray-800">
+<body class="client-view">
 
-    <div class="flex h-screen bg-white">
-        <!-- Sidebar -->
-        <aside class="w-64 flex flex-col border-r">
-            <div class="h-16 flex items-center justify-between px-4 border-b">
+    <div id="client-view-container" class="flex h-screen bg-white">
+        <!-- Sidebar Cliente -->
+        <aside class="w-64 flex-shrink-0 flex flex-col sidebar-client">
+            <div class="h-16 flex items-center justify-between px-4 sidebar-client-header">
                 <span class="text-xl font-bold text-gray-800">BeePayroll</span>
                 <button class="text-gray-500 hover:text-gray-800"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path></svg></button>
             </div>
             <nav class="flex-1 py-4 space-y-2">
                 <a href="#" class="sidebar-link flex items-center py-2.5 px-4 rounded-md transition duration-200 text-gray-700" data-target="panel"><svg class="w-5 h-5 mr-3" viewBox="0 0 24 24" fill="currentColor"><path d="M10 4H4v6h6V4zm10 0h-6v6h6V4zM10 14H4v6h6v-6zm10 0h-6v6h6v-6z"/></svg>Panel Principal</a>
-                <a href="#" class="sidebar-link flex items-center py-2.5 px-4 rounded-md transition duration-200 text-gray-700" data-target="empresa"><svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5h1v5h-1z"></path></svg>Empresa</a>
-                <a href="#" class="sidebar-link flex items-center py-2.5 px-4 rounded-md transition duration-200 text-gray-700" data-target="trabajadores"><svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.653-.28-1.25-1.457-1.857M17 20v-2c0-1.657-1.343-3-3-3s-3 1.343-3 3v2m-6 0h5m-5 0v-2a3 3 0 015.356-1.857M12 12a3 3 0 100-6 3 3 0 000 6z"></path></svg>Trabajadores</a>
                 <a href="#" class="sidebar-link sidebar-link-active flex items-center py-2.5 px-4 rounded-md transition duration-200" data-target="facturacion"><svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>Facturación</a>
                 <a href="#" class="sidebar-link flex items-center py-2.5 px-4 rounded-md transition duration-200 text-gray-700" data-target="servicios"><svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21v-1a6 6 0 00-1-3.749m-8 1.258a6 6 0 011-3.749m-1 8a6 6 0 00-3-3.75"></path></svg>Servicios Adicionales</a>
-                <a href="#" class="sidebar-link flex items-center py-2.5 px-4 rounded-md transition duration-200 text-gray-700" data-target="configuracion"><svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>Configuración</a>
             </nav>
-            <div class="py-4 px-4 border-t"><a href="#" class="flex items-center text-sm text-gray-600 hover:text-gray-900"><svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z"></path><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-5.998 12.078 12.078 0 01.665-6.479L12 14z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-5.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"></path></svg>Beepayroll Academy</a></div>
+            <div class="py-4 px-4 sidebar-client-footer"><a href="#" class="flex items-center text-sm text-gray-600 hover:text-gray-900"><svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z"></path><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-5.998 12.078 12.078 0 01.665-6.479L12 14z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-5.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"></path></svg>Beepayroll Academy</a></div>
         </aside>
-
-        <!-- Main Content -->
         <div class="flex-1 flex flex-col overflow-hidden">
             <header class="h-16 flex items-center justify-between px-6 border-b bg-white">
                 <h1 id="page-title" class="text-2xl font-semibold text-gray-800">Facturación</h1>
-                 <div class="relative"><svg class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="text" placeholder="Buscar trabajadores..." class="pl-10 pr-4 py-2 border rounded-md w-64 focus:outline-none focus:ring-2 focus:ring-blue-500"></div>
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-2 text-sm">
+                        <span class="text-gray-500">Vista Cliente</span>
+                        <label for="view-switch" class="flex items-center cursor-pointer">
+                            <div class="relative">
+                                <input type="checkbox" id="view-switch" class="sr-only">
+                                <div class="switch-bg block bg-gray-200 w-10 h-6 rounded-full"></div>
+                                <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition"></div>
+                            </div>
+                        </label>
+                        <span class="font-semibold">Vista Admin</span>
+                    </div>
+                    <div class="relative"><svg class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="text" placeholder="Buscar..." class="pl-10 pr-4 py-2 border rounded-md w-64"></div>
+                </div>
             </header>
-            
-            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-4 md:p-8">
+            <main class="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-8">
                 <div id="content-facturacion" class="content-section space-y-8"></div>
                 <div id="content-servicios" class="content-section hidden space-y-8"></div>
                 <div id="content-panel" class="content-section hidden"><h2 class="text-xl font-semibold">Contenido del Panel Principal</h2></div>
-                <div id="content-empresa" class="content-section hidden"><h2 class="text-xl font-semibold">Contenido de Empresa</h2></div>
-                <div id="content-trabajadores" class="content-section hidden"><h2 class="text-xl font-semibold">Contenido de Trabajadores</h2></div>
+            </main>
+        </div>
+    </div>
+
+    <div id="admin-view-container" class="hidden flex h-screen">
+        <!-- Sidebar Admin -->
+        <aside class="w-64 flex-shrink-0 flex flex-col sidebar-admin">
+            <div class="h-16 flex items-center justify-between px-4 sidebar-admin-header"><span class="text-xl font-bold">BeePayroll ERP</span></div>
+            <nav class="flex-1 py-4 space-y-1">
+                <a href="#" class="sidebar-link flex items-center py-2.5 px-4 rounded-md" data-target-admin="nomina"><svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>Sucursales Nómina</a>
+                <a href="#" class="sidebar-link flex items-center py-2.5 px-4 rounded-md" data-target-admin="recursos"><svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"></path></svg>Recursos Financieros</a>
+                <a href="#" class="sidebar-link sidebar-link-active flex items-center py-2.5 px-4 rounded-md" data-target-admin="saas-facturacion"><svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>Facturación SaaS</a>
+                <a href="#" class="sidebar-link flex items-center py-2.5 px-4 rounded-md" data-target-admin="configuracion"><svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>Configuración</a>
+            </nav>
+        </aside>
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <header class="h-16 flex items-center justify-between px-6 admin-header">
+                <h1 id="admin-page-title" class="text-2xl font-semibold">Lista de Clientes SaaS</h1>
+                <div class="flex items-center space-x-4">
+                    <span class="text-sm">ADMIN</span>
+                    <button class="p-1 rounded-full"><svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg></button>
+                </div>
+            </header>
+            <main class="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-8">
+                <div id="content-admin-saas-facturacion" class="content-admin-section"></div>
+                <div id="content-admin-nomina" class="content-admin-section hidden"><h2 class="text-xl font-semibold">Contenido de Sucursales Nómina</h2></div>
+                <div id="content-admin-recursos" class="content-admin-section hidden"><h2 class="text-xl font-semibold">Contenido de Recursos Financieros</h2></div>
+                <div id="content-admin-configuracion" class="content-admin-section hidden"><h2 class="text-xl font-semibold">Contenido de Configuración Admin</h2></div>
             </main>
         </div>
     </div>
@@ -103,6 +151,15 @@
             ]
         };
 
+        const adminData = {
+            clients: [
+                { id: 'cli_001', name: 'Nóminas Fáciles S.A. de C.V.', rfc: 'NFA123456XYZ', status: 'Activo' },
+                { id: 'cli_002', name: 'Constructora del Sureste', rfc: 'CSU987654ABC', status: 'Activo' },
+                { id: 'cli_003', name: 'Transportes Rápidos del Norte', rfc: 'TRN456789DEF', status: 'Suspendido' },
+                { id: 'cli_004', name: 'Servicios Integrales de Limpieza', rfc: 'SIL159263GHI', status: 'Activo' },
+            ]
+        };
+
         // --- HELPERS ---
         const formatCurrency = (amount) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(amount);
         const formatDate = (dateString, options = { day: '2-digit', month: '2-digit', year: 'numeric' }) => new Date(dateString).toLocaleDateString('es-MX', options);
@@ -114,7 +171,7 @@
             setTimeout(() => { element.innerHTML = originalContent; element.classList.remove('text-green-600'); }, 2000);
         }
 
-        // --- RENDER FUNCTIONS ---
+        // --- RENDER FUNCTIONS FOR CLIENT VIEW ---
         function renderFacturacionContent() {
             const container = document.getElementById('content-facturacion');
             const pendingInvoice = data.invoices.find(inv => inv.status === 'pending');
@@ -168,10 +225,40 @@
             return `<div class="bg-white p-6 rounded-lg shadow-sm"><h2 class="text-xl font-semibold mb-4">Historial de facturas</h2><div class="overflow-x-auto"><table class="min-w-full divide-y divide-gray-200"><thead class="bg-gray-50"><tr><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID de factura</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Periodo</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Monto</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estatus</th><th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th></tr></thead><tbody class="bg-white divide-y divide-gray-200">${invoicesHTML}</tbody></table></div></div>`;
         }
 
+        // --- RENDER FUNCTIONS FOR ADMIN VIEW ---
+        function renderAdminView() {
+            const container = document.getElementById('content-admin-saas-facturacion');
+            const clientsHTML = adminData.clients.map(client => `
+                <tr class="hover:bg-gray-700">
+                    <td class="p-4 whitespace-nowrap text-sm font-medium">${client.name}</td>
+                    <td class="p-4 whitespace-nowrap text-sm text-gray-400">${client.rfc}</td>
+                    <td class="p-4 whitespace-nowrap text-sm">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${client.status === 'Activo' ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'}">
+                            ${client.status}
+                        </span>
+                    </td>
+                </tr>
+            `).join('');
+            container.innerHTML = `
+                <div class="admin-table rounded-lg shadow overflow-hidden">
+                    <table class="min-w-full divide-y divide-gray-700">
+                        <thead class="bg-gray-800">
+                            <tr>
+                                <th scope="col" class="p-4 text-left text-xs font-medium uppercase tracking-wider">Nombre Comercial</th>
+                                <th scope="col" class="p-4 text-left text-xs font-medium uppercase tracking-wider">RFC</th>
+                                <th scope="col" class="p-4 text-left text-xs font-medium uppercase tracking-wider">Estatus</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-700">${clientsHTML}</tbody>
+                    </table>
+                </div>
+            `;
+        }
+
         // --- MODAL FUNCTIONS ---
         function showPaymentModal() {
             const modalContainer = document.getElementById('payment-modal');
-            const renderPaymentDetail = (label, value) => `<div class="flex items-center justify-between bg-gray-50 p-3 rounded-md text-sm"><div class="flex-1 min-w-0"><dt class="text-xs text-gray-500 truncate">${label}</dt><dd class="font-mono text-gray-900 truncate">${value}</dd></div><button onclick="copyToClipboard('${value}', this)" class="ml-2 flex-shrink-0 flex items-center font-medium text-indigo-600 hover:text-indigo-800"><svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>Copiar</button></div>`;
+            const renderPaymentDetail = (label, value) => `<div class="flex items-center justify-between bg-gray-100 p-3 rounded-md text-sm"><div class="flex-1 min-w-0"><dt class="text-xs text-gray-500 truncate">${label}</dt><dd class="font-mono text-gray-900 truncate">${value}</dd></div><button onclick="copyToClipboard('${value}', this)" class="ml-2 flex-shrink-0 flex items-center font-medium text-indigo-600 hover:text-indigo-800"><svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>Copiar</button></div>`;
             modalContainer.innerHTML = `<div class="modal-content"><div class="flex justify-between items-start mb-4"><h3 class="text-xl font-semibold">Métodos de Pago</h3><button onclick="closeModal('payment-modal')" class="text-gray-400 hover:text-gray-600 text-3xl leading-none">&times;</button></div><div class="flex border-b mb-4"><button id="bbva-tab-btn" class="py-2 px-4 border-b-2 font-medium text-sm text-indigo-600 border-indigo-600">Desde BBVA</button><button id="other-banks-tab-btn" class="py-2 px-4 border-b-2 font-medium text-sm text-gray-500 border-transparent">Otros Bancos</button></div><div id="bbva-payment-info" class="space-y-3">${renderPaymentDetail('Cuenta CLABE', '036650500655206270')}${renderPaymentDetail('Referencia', '1506250')}${renderPaymentDetail('Concepto', '313083016')}</div><div id="other-banks-payment-info" class="hidden space-y-3">${renderPaymentDetail('Cuenta CLABE', '012914002015062500')}${renderPaymentDetail('Concepto', '313083016')}${renderPaymentDetail('Banco Destino', 'BBVA')}${renderPaymentDetail('Referencia (opcional)', '313083016')}${renderPaymentDetail('Beneficiario', 'ESSAD')}</div></div>`;
             modalContainer.classList.remove('hidden');
             const bbvaBtn = modalContainer.querySelector('#bbva-tab-btn'), otherBtn = modalContainer.querySelector('#other-banks-tab-btn');
@@ -189,27 +276,47 @@
         
         function closeModal(modalId) { document.getElementById(modalId).classList.add('hidden'); }
 
-        // --- NAVIGATION LOGIC ---
-        function switchContent(targetId, linkElement) {
-            document.querySelectorAll('.content-section').forEach(section => section.classList.add('hidden'));
-            document.getElementById(`content-${targetId}`).classList.remove('hidden');
+        // --- NAVIGATION & VIEW SWITCH LOGIC ---
+        function switchContent(targetId, linkElement, viewSuffix) {
+             document.querySelectorAll(`.content${viewSuffix}-section`).forEach(section => section.classList.add('hidden'));
+             document.getElementById(`content${viewSuffix}-${targetId}`).classList.remove('hidden');
 
-            document.querySelectorAll('.sidebar-link').forEach(link => {
-                link.classList.remove('sidebar-link-active');
-                if (!link.classList.contains('text-gray-700')) link.classList.add('text-gray-700');
-            });
-            
-            linkElement.classList.add('sidebar-link-active');
-            linkElement.classList.remove('text-gray-700');
-
-            document.getElementById('page-title').textContent = linkElement.textContent.trim();
+             document.querySelectorAll(`${viewSuffix === '-admin' ? '#admin-view-container' : '#client-view-container'} .sidebar-link`).forEach(link => {
+                 link.classList.remove('sidebar-link-active');
+                 if(viewSuffix !== '-admin') link.classList.add('text-gray-700');
+             });
+             linkElement.classList.add('sidebar-link-active');
+             if(viewSuffix !== '-admin') linkElement.classList.remove('text-gray-700');
+             
+             document.getElementById(viewSuffix === '-admin' ? 'admin-page-title' : 'page-title').textContent = linkElement.textContent.trim();
         }
+
+        document.getElementById('view-switch').addEventListener('change', function() {
+            const isChecked = this.checked;
+            const clientContainer = document.getElementById('client-view-container');
+            const adminContainer = document.getElementById('admin-view-container');
+            const body = document.body;
+
+            if (isChecked) {
+                clientContainer.classList.add('hidden');
+                adminContainer.classList.remove('hidden');
+                body.classList.remove('client-view');
+                body.classList.add('admin-view');
+            } else {
+                adminContainer.classList.add('hidden');
+                clientContainer.classList.remove('hidden');
+                body.classList.add('client-view');
+                body.classList.remove('admin-view');
+            }
+        });
 
         // --- INITIALIZATION ---
         document.addEventListener('DOMContentLoaded', () => {
             renderFacturacionContent();
             renderServiciosContent();
-            document.querySelectorAll('.sidebar-link').forEach(link => { link.addEventListener('click', (e) => { e.preventDefault(); switchContent(e.currentTarget.dataset.target, e.currentTarget); }); });
+            renderAdminView();
+            document.querySelectorAll('#client-view-container .sidebar-link').forEach(link => { link.addEventListener('click', (e) => { e.preventDefault(); switchContent(e.currentTarget.dataset.target, e.currentTarget, ''); }); });
+            document.querySelectorAll('#admin-view-container .sidebar-link').forEach(link => { link.addEventListener('click', (e) => { e.preventDefault(); switchContent(e.currentTarget.dataset.targetAdmin, e.currentTarget, '-admin'); }); });
             document.querySelectorAll('.modal-backdrop').forEach(modal => { modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(modal.id); }); });
         });
     </script>
