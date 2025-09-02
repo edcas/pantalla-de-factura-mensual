@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prototipo - BeePayroll Layout</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f9fafb;
+        }
+        .sidebar-link-active {
+            background-color: #0c4a6e;
+            color: #ffffff;
+            font-weight: 600;
+        }
+        .sidebar-link.text-gray-700:hover {
+            background-color: #f3f4f6;
+        }
+        .sidebar-link-active:hover {
+            background-color: #0c4a6e;
+        }
+        .modal-backdrop {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(17, 24, 39, 0.6);
+            display: flex;
+            justify-content: center; align-items: center; z-index: 50;
+            backdrop-filter: blur(4px);
+        }
+        .modal-content {
+            background-color: white; padding: 2rem; border-radius: 0.5rem;
+            max-width: 90%; width: 500px; max-height: 90vh; overflow-y: auto;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <div class="flex h-screen bg-white">
+        <!-- Sidebar -->
+        <aside class="w-64 flex flex-col border-r">
+            <div class="h-16 flex items-center justify-between px-4 border-b">
+                <span class="text-xl font-bold text-gray-800">BeePayroll</span>
+                <button class="text-gray-500 hover:text-gray-800"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path></svg></button>
+            </div>
+            <nav class="flex-1 py-4 space-y-2">
+                <a href="#" class="sidebar-link flex items-center py-2.5 px-4 rounded-md transition duration-200 text-gray-700" data-target="panel"><svg class="w-5 h-5 mr-3" viewBox="0 0 24 24" fill="currentColor"><path d="M10 4H4v6h6V4zm10 0h-6v6h6V4zM10 14H4v6h6v-6zm10 0h-6v6h6v-6z"/></svg>Panel Principal</a>
+                <a href="#" class="sidebar-link flex items-center py-2.5 px-4 rounded-md transition duration-200 text-gray-700" data-target="empresa"><svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5h1v5h-1z"></path></svg>Empresa</a>
+                <a href="#" class="sidebar-link flex items-center py-2.5 px-4 rounded-md transition duration-200 text-gray-700" data-target="trabajadores"><svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.653-.28-1.25-1.457-1.857M17 20v-2c0-1.657-1.343-3-3-3s-3 1.343-3 3v2m-6 0h5m-5 0v-2a3 3 0 015.356-1.857M12 12a3 3 0 100-6 3 3 0 000 6z"></path></svg>Trabajadores</a>
+                <a href="#" class="sidebar-link sidebar-link-active flex items-center py-2.5 px-4 rounded-md transition duration-200" data-target="facturacion"><svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>Facturación</a>
+                <a href="#" class="sidebar-link flex items-center py-2.5 px-4 rounded-md transition duration-200 text-gray-700" data-target="servicios"><svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21v-1a6 6 0 00-1-3.749m-8 1.258a6 6 0 011-3.749m-1 8a6 6 0 00-3-3.75"></path></svg>Servicios Adicionales</a>
+                <a href="#" class="sidebar-link flex items-center py-2.5 px-4 rounded-md transition duration-200 text-gray-700" data-target="configuracion"><svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>Configuración</a>
+            </nav>
+            <div class="py-4 px-4 border-t"><a href="#" class="flex items-center text-sm text-gray-600 hover:text-gray-900"><svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z"></path><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-5.998 12.078 12.078 0 01.665-6.479L12 14z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-5.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"></path></svg>Beepayroll Academy</a></div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <header class="h-16 flex items-center justify-between px-6 border-b bg-white">
+                <h1 id="page-title" class="text-2xl font-semibold text-gray-800">Facturación</h1>
+                 <div class="relative"><svg class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="text" placeholder="Buscar trabajadores..." class="pl-10 pr-4 py-2 border rounded-md w-64 focus:outline-none focus:ring-2 focus:ring-blue-500"></div>
+            </header>
+            
+            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-4 md:p-8">
+                <div id="content-facturacion" class="content-section space-y-8"></div>
+                <div id="content-servicios" class="content-section hidden space-y-8"></div>
+                <div id="content-panel" class="content-section hidden"><h2 class="text-xl font-semibold">Contenido del Panel Principal</h2></div>
+                <div id="content-empresa" class="content-section hidden"><h2 class="text-xl font-semibold">Contenido de Empresa</h2></div>
+                <div id="content-trabajadores" class="content-section hidden"><h2 class="text-xl font-semibold">Contenido de Trabajadores</h2></div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="payment-modal" class="modal-backdrop hidden"></div>
+    <div id="invoice-detail-modal" class="modal-backdrop hidden"></div>
+    <div id="plan-change-modal" class="modal-backdrop hidden"></div>
+    <div id="quote-request-modal" class="modal-backdrop hidden"></div>
+
+    <script>
+        // --- DATA MODEL ---
+        const data = {
+             "account": { "accountId": "acc_12345", "companyName": "Nóminas Fáciles S.A. de C.V." },
+             "subscription": { "planId": "pro_monthly", "planName": "Growth", "billingCycle": "monthly", "status": "active", "costPerEmployee": 99, "activeEmployees": 42, "addons": [
+                { "id": "addon_support", "name": "Soporte y Asesoría Técnica en Nómina y Seguridad Social", "cost": 500 },
+                { "id": "addon_legal", "name": "Asesoría y Consultoría Legal Laboral", "cost": 2000 }
+             ] },
+             "billing": { "cycleStartDate": "2025-08-01T00:00:00Z", "cycleEndDate": "2025-08-31T23:59:59Z", "paymentDueDate": "2025-09-10T23:59:59Z", "projectedCost": { "employees": 4158, "addons": 2500, "proratedCredits": -50, "total": 6608 } },
+             "invoices": [
+                { "invoiceId": "inv_99887", "periodStart": "2025-08-01", "periodEnd": "2025-08-31", "totalAmount": 6608.00, "status": "pending", "pdfUrl": "#"},
+                { "invoiceId": "inv_78910", "periodStart": "2025-07-01", "periodEnd": "2025-07-31", "totalAmount": 4460.00, "status": "paid", "pdfUrl": "#" }
+            ],
+             "availablePlans": [{ "planId": "growth_monthly", "name": "Growth", "monthlyPerEmployeeCost": 99, "annualDiscountPercentage": 20, "features": ["Todo lo de Básico", "Reportes avanzados"] }],
+             "availableAddons": [
+                { "id": "addon_support", "name": "Soporte y Asesoría Técnica en Nómina y Seguridad Social", "description": "Expertos a tu disposición para resolver dudas técnicas.", "longDescription": "Nuestro equipo de soporte especializado está listo para ayudarte con cualquier consulta técnica que tengas sobre la plataforma, el cálculo de impuestos, las cuotas obrero-patronales y más. Asegura que tu nómina siempre esté correcta y a tiempo.", "startingPrice": 500, "priceSuffix": "", "imageUrl": "https://placehold.co/600x400/E0F2FE/0891B2?text=Soporte+Técnico", "availableSlots": ["2025-09-08 10:00 AM", "2025-09-08 02:00 PM", "2025-09-09 11:00 AM"] },
+                { "id": "addon_legal", "name": "Asesoría y Consultoría Legal Laboral", "description": "Acceso a nuestra red de abogados laboralistas para consultas.", "longDescription": "Mantente protegido y cumple con la ley. Nuestros abogados asociados pueden asesorarte en la redacción de contratos, procesos de terminación laboral, y cualquier otra duda relacionada con la Ley Federal del Trabajo en México.", "startingPrice": 2000, "priceSuffix": "", "imageUrl": "https://placehold.co/600x400/FFFBEB/B45309?text=Asesoría+Legal", "availableSlots": ["2025-09-10 10:00 AM", "2025-09-11 12:00 PM"] },
+                { "id": "addon_fiscal", "name": "Asesoría y Consultoría Contable-Fiscal", "description": "Optimiza tu carga fiscal y asegura el correcto registro contable.", "longDescription": "Un correcto tratamiento contable y fiscal de la nómina es crucial. Nuestros consultores te ayudan a optimizar tu estrategia fiscal, aplicar deducciones correctamente y generar los reportes necesarios para tus declaraciones.", "startingPrice": 500, "priceSuffix": "", "imageUrl": "https://placehold.co/600x400/F0FDF4/16A34A?text=Consultoría+Fiscal", "availableSlots": ["2025-09-09 09:00 AM", "2025-09-09 04:00 PM"] },
+                { "id": "addon_integrations", "name": "Integraciones a Sistemas Contables", "description": "Conectamos BeePayroll con tu sistema contable (ERP).", "longDescription": "Ahorra horas de trabajo manual. Desarrollamos integraciones a la medida para que la información de tu nómina se vea reflejada automáticamente en tu sistema contable o ERP, asegurando consistencia y eliminando errores.", "startingPrice": 10000, "priceSuffix": "", "imageUrl": "https://placehold.co/600x400/EFE2FF/4F46E5?text=Integraciones", "availableSlots": ["2025-09-12 10:00 AM", "2025-09-15 10:00 AM"] },
+                { "id": "addon_beepayroll_app", "name": "App del Trabajador (Beepayroll App)", "description": "Permite a tus empleados consultar sus recibos y solicitar vacaciones.", "longDescription": "Empodera a tu equipo con nuestra app móvil. Tus trabajadores podrán acceder a sus recibos de nómina al instante, gestionar solicitudes de vacaciones, y registrar su entrada y salida, todo desde la comodidad de su teléfono.", "startingPrice": 40, "priceSuffix": " / trabajador / mensual", "imageUrl": "https://placehold.co/600x400/FEF2F2/DC2626?text=Beepayroll+App", "availableSlots": ["2025-09-08 03:00 PM", "2025-09-09 03:00 PM"] },
+                { "id": "addon_multicompany", "name": "Multicompañía (Registros Patronales)", "description": "Administra múltiples empresas desde una sola cuenta.", "longDescription": "Ideal para contadores o grupos corporativos. Con esta funcionalidad, puedes gestionar la nómina de diferentes razones sociales o registros patronales bajo una misma cuenta, simplificando la administración y el acceso.", "startingPrice": 100, "priceSuffix": " / mensuales", "imageUrl": "https://placehold.co/600x400/EFF6FF/1D4ED8?text=Multicompañía", "availableSlots": ["2025-09-10 04:00 PM", "2025-09-11 04:00 PM"] }
+            ]
+        };
+
+        // --- HELPERS ---
+        const formatCurrency = (amount) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(amount);
+        const formatDate = (dateString, options = { day: '2-digit', month: '2-digit', year: 'numeric' }) => new Date(dateString).toLocaleDateString('es-MX', options);
+        function copyToClipboard(text, element) {
+            const tempInput = document.createElement('textarea'); tempInput.value = text; document.body.appendChild(tempInput); tempInput.select(); document.execCommand('copy'); document.body.removeChild(tempInput);
+            const originalContent = element.innerHTML;
+            element.innerHTML = `<svg class="w-4 h-4 mr-1 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Copiado`;
+            element.classList.add('text-green-600');
+            setTimeout(() => { element.innerHTML = originalContent; element.classList.remove('text-green-600'); }, 2000);
+        }
+
+        // --- RENDER FUNCTIONS ---
+        function renderFacturacionContent() {
+            const container = document.getElementById('content-facturacion');
+            const pendingInvoice = data.invoices.find(inv => inv.status === 'pending');
+            let noticeHTML = '';
+            if (pendingInvoice) {
+                const today = new Date('2025-09-05T10:00:00Z');
+                const dueDate = new Date(data.billing.paymentDueDate);
+                const diffDays = Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24));
+                noticeHTML = `<div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded-md flex items-center justify-between" role="alert"><p><strong class="font-bold">Aviso Importante:</strong> Tu fecha de pago es en ${diffDays} días.</p><button onclick="showPaymentModal()" class="bg-yellow-500 text-white font-bold py-2 px-4 rounded hover:bg-yellow-600">Pagar</button></div>`;
+            }
+            
+            const summaryHTML = `
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <div class="flex justify-between items-center mb-4">
+                         <h2 class="text-xl font-semibold">Resumen del Ciclo Actual</h2>
+                         <a href="#" title="¿Cómo se calcula mi facturación?" class="text-gray-400 hover:text-indigo-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.79 4 4 0 2.21-1.79 4-4 4-.432 0-.84-.07-1.22-.195M12 4v.01M12 20v.01M4 12h.01M20 12h.01M6.343 6.343l.01.01M17.657 17.657l.01.01M6.343 17.657l.01-.01M17.657 6.343l.01.01"></path></svg></a>
+                    </div>
+                    <div class="space-y-4">
+                        <div>
+                            <p class="text-sm text-gray-500">Plan actual</p>
+                            <p class="text-lg font-medium">${data.subscription.planName} (${data.subscription.billingCycle === 'monthly' ? 'Mensual' : 'Anual'})</p>
+                        </div>
+                        <div class="border-t pt-4">
+                            <p class="text-sm text-gray-500">Costo del ciclo</p>
+                            <p class="text-4xl font-bold text-indigo-600">${formatCurrency(data.billing.projectedCost.total)}</p>
+                        </div>
+                        <div class="text-sm space-y-2 text-gray-600 pt-2">
+                            <div class="flex justify-between font-semibold"><span>Detalle del cobro</span><span>Monto</span></div>
+                            <div class="flex justify-between"><span>Costo por ${data.subscription.activeEmployees} empleados</span><span>${formatCurrency(data.billing.projectedCost.employees)}</span></div>
+                            <div class="flex justify-between"><span>Servicios adicionales (${data.subscription.addons.length})</span><span>${formatCurrency(data.billing.projectedCost.addons)}</span></div>
+                            ${data.subscription.addons.map(addon => `<div class="flex justify-between pl-4 text-gray-500"><span>${addon.name}</span><span>${formatCurrency(addon.cost)}</span></div>`).join('')}
+                            <div class="flex justify-between text-green-600"><span>Créditos y prorrateos</span><span>-${formatCurrency(Math.abs(data.billing.projectedCost.proratedCredits))}</span></div>
+                        </div>
+                    </div>
+                </div>`;
+            
+            const historyHTML = renderInvoiceHistoryHTML();
+            
+            container.innerHTML = noticeHTML + summaryHTML + historyHTML;
+        }
+        
+        function renderServiciosContent() {
+            const container = document.getElementById('content-servicios');
+            const activeAddonIds = new Set(data.subscription.addons.map(a => a.id));
+            const addonsHTML = `<div class="bg-white p-6 rounded-lg shadow-sm"><h2 class="text-xl font-semibold mb-6">Explora Nuestros Servicios Adicionales</h2><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">${data.availableAddons.map(addon => { const isActive = activeAddonIds.has(addon.id); return `<div class="border rounded-lg overflow-hidden flex flex-col shadow-sm hover:shadow-lg transition-shadow"><img src="${addon.imageUrl}" alt="${addon.name}" class="w-full h-40 object-cover"><div class="p-4 flex flex-col flex-grow"><h4 class="font-bold">${addon.name}</h4><p class="text-sm text-gray-600 mt-1 mb-4 flex-grow">${addon.description}</p><div class="mt-auto"><p class="text-sm text-gray-500">Desde <span class="text-xl font-semibold text-gray-800">${formatCurrency(addon.startingPrice)}</span><span class="text-xs">${addon.priceSuffix || ''}</span></p><button ${isActive ? 'disabled' : `onclick="showQuoteRequestModal('${addon.id}')"`} class="w-full mt-4 ${isActive ? 'bg-green-100 text-green-700 cursor-not-allowed' : 'bg-indigo-100 text-indigo-700 hover:bg-indigo-200'} px-4 py-2 rounded-lg text-sm font-semibold">${isActive ? 'Servicio Activo' : 'Solicitar Cotización'}</button></div></div></div>` }).join('')}</div></div>`;
+            container.innerHTML = addonsHTML;
+        }
+
+        function renderInvoiceHistoryHTML() {
+            const invoicesHTML = data.invoices.map(invoice => `<tr><td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${invoice.invoiceId}</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formatDate(invoice.periodStart)} al ${formatDate(invoice.periodEnd)}</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formatCurrency(invoice.totalAmount)}</td><td class="px-6 py-4 whitespace-nowrap text-sm"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${invoice.status === 'paid' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">${invoice.status === 'paid' ? 'Pagada' : 'Pendiente'}</span></td><td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"><a href="${invoice.pdfUrl}" class="text-indigo-600 hover:text-indigo-900">Ver PDF</a></td></tr>`).join('');
+            return `<div class="bg-white p-6 rounded-lg shadow-sm"><h2 class="text-xl font-semibold mb-4">Historial de facturas</h2><div class="overflow-x-auto"><table class="min-w-full divide-y divide-gray-200"><thead class="bg-gray-50"><tr><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID de factura</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Periodo</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Monto</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estatus</th><th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th></tr></thead><tbody class="bg-white divide-y divide-gray-200">${invoicesHTML}</tbody></table></div></div>`;
+        }
+
+        // --- MODAL FUNCTIONS ---
+        function showPaymentModal() {
+            const modalContainer = document.getElementById('payment-modal');
+            const renderPaymentDetail = (label, value) => `<div class="flex items-center justify-between bg-gray-50 p-3 rounded-md text-sm"><div class="flex-1 min-w-0"><dt class="text-xs text-gray-500 truncate">${label}</dt><dd class="font-mono text-gray-900 truncate">${value}</dd></div><button onclick="copyToClipboard('${value}', this)" class="ml-2 flex-shrink-0 flex items-center font-medium text-indigo-600 hover:text-indigo-800"><svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>Copiar</button></div>`;
+            modalContainer.innerHTML = `<div class="modal-content"><div class="flex justify-between items-start mb-4"><h3 class="text-xl font-semibold">Métodos de Pago</h3><button onclick="closeModal('payment-modal')" class="text-gray-400 hover:text-gray-600 text-3xl leading-none">&times;</button></div><div class="flex border-b mb-4"><button id="bbva-tab-btn" class="py-2 px-4 border-b-2 font-medium text-sm text-indigo-600 border-indigo-600">Desde BBVA</button><button id="other-banks-tab-btn" class="py-2 px-4 border-b-2 font-medium text-sm text-gray-500 border-transparent">Otros Bancos</button></div><div id="bbva-payment-info" class="space-y-3">${renderPaymentDetail('Cuenta CLABE', '036650500655206270')}${renderPaymentDetail('Referencia', '1506250')}${renderPaymentDetail('Concepto', '313083016')}</div><div id="other-banks-payment-info" class="hidden space-y-3">${renderPaymentDetail('Cuenta CLABE', '012914002015062500')}${renderPaymentDetail('Concepto', '313083016')}${renderPaymentDetail('Banco Destino', 'BBVA')}${renderPaymentDetail('Referencia (opcional)', '313083016')}${renderPaymentDetail('Beneficiario', 'ESSAD')}</div></div>`;
+            modalContainer.classList.remove('hidden');
+            const bbvaBtn = modalContainer.querySelector('#bbva-tab-btn'), otherBtn = modalContainer.querySelector('#other-banks-tab-btn');
+            const bbvaInfo = modalContainer.querySelector('#bbva-payment-info'), otherInfo = modalContainer.querySelector('#other-banks-payment-info');
+            bbvaBtn.addEventListener('click', () => { bbvaInfo.classList.remove('hidden'); otherInfo.classList.add('hidden'); bbvaBtn.classList.add('text-indigo-600', 'border-indigo-600'); otherBtn.classList.remove('text-indigo-600', 'border-indigo-600', 'text-gray-500', 'border-transparent'); otherBtn.classList.add('text-gray-500', 'border-transparent'); });
+            otherBtn.addEventListener('click', () => { otherInfo.classList.remove('hidden'); bbvaInfo.classList.add('hidden'); otherBtn.classList.add('text-indigo-600', 'border-indigo-600'); bbvaBtn.classList.remove('text-indigo-600', 'border-indigo-600'); bbvaBtn.classList.add('text-gray-500', 'border-transparent'); });
+        }
+
+        function showQuoteRequestModal(addonId) {
+            const addon = data.availableAddons.find(a => a.id === addonId); if (!addon) return;
+            const modalContainer = document.getElementById('quote-request-modal');
+            modalContainer.innerHTML = `<div class="modal-content !max-w-4xl w-full"><div class="flex justify-between items-start mb-4"><h3 class="text-2xl font-bold text-gray-900">${addon.name}</h3><button onclick="closeModal('quote-request-modal')" class="text-gray-400 hover:text-gray-600 text-3xl leading-none">&times;</button></div><div class="grid grid-cols-1 md:grid-cols-2 gap-8"><div><img src="${addon.imageUrl.replace('600x400', '800x600')}" alt="${addon.name}" class="rounded-lg shadow-md w-full object-cover aspect-[4/3]"></div><div class="space-y-4 flex flex-col"><p class="text-gray-600 flex-grow">${addon.longDescription}</p><div><label for="schedule-slot" class="block text-sm font-medium text-gray-700">Agenda una videollamada con un experto:</label><select id="schedule-slot" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"><option>Selecciona un horario</option>${addon.availableSlots.map(slot => `<option value="${slot}">${slot}</option>`).join('')}</select></div><button onclick="alert('Llamada agendada para ' + document.getElementById('schedule-slot').value); closeModal('quote-request-modal');" class="w-full bg-indigo-600 text-white px-4 py-2.5 rounded-lg font-semibold hover:bg-indigo-700">Agendar Llamada</button></div></div></div>`;
+            modalContainer.classList.remove('hidden');
+        }
+        
+        function closeModal(modalId) { document.getElementById(modalId).classList.add('hidden'); }
+
+        // --- NAVIGATION LOGIC ---
+        function switchContent(targetId, linkElement) {
+            document.querySelectorAll('.content-section').forEach(section => section.classList.add('hidden'));
+            document.getElementById(`content-${targetId}`).classList.remove('hidden');
+
+            document.querySelectorAll('.sidebar-link').forEach(link => {
+                link.classList.remove('sidebar-link-active');
+                if (!link.classList.contains('text-gray-700')) link.classList.add('text-gray-700');
+            });
+            
+            linkElement.classList.add('sidebar-link-active');
+            linkElement.classList.remove('text-gray-700');
+
+            document.getElementById('page-title').textContent = linkElement.textContent.trim();
+        }
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderFacturacionContent();
+            renderServiciosContent();
+            document.querySelectorAll('.sidebar-link').forEach(link => { link.addEventListener('click', (e) => { e.preventDefault(); switchContent(e.currentTarget.dataset.target, e.currentTarget); }); });
+            document.querySelectorAll('.modal-backdrop').forEach(modal => { modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(modal.id); }); });
+        });
+    </script>
+</body>
+</html>
