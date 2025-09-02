@@ -9,6 +9,7 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
+            
         }
         /* --- Estilos Vista Cliente --- */
         .client-view { background-color: #f9fafb; }
@@ -72,7 +73,7 @@
                 <h1 id="page-title" class="text-2xl font-semibold text-gray-800">Facturación</h1>
                 <div class="flex items-center space-x-4">
                     <div class="flex items-center space-x-2 text-sm">
-                        <span class="text-gray-500">Vista Cliente</span>
+                        <span class="font-semibold">Vista Cliente</span>
                         <label for="view-switch" class="flex items-center cursor-pointer">
                             <div class="relative">
                                 <input type="checkbox" id="view-switch" class="sr-only">
@@ -80,7 +81,7 @@
                                 <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition"></div>
                             </div>
                         </label>
-                        <span class="font-semibold">Vista Admin</span>
+                        <span class="text-gray-500">Vista Admin</span>
                     </div>
                     <div class="relative"><svg class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="text" placeholder="Buscar..." class="pl-10 pr-4 py-2 border rounded-md w-64"></div>
                 </div>
@@ -108,6 +109,17 @@
             <header class="h-16 flex items-center justify-between px-6 admin-header">
                 <h1 id="admin-page-title" class="text-2xl font-semibold">Lista de Clientes SaaS</h1>
                 <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-2 text-sm">
+                        <span class="text-gray-400">Vista Cliente</span>
+                        <label for="admin-view-switch" class="flex items-center cursor-pointer">
+                            <div class="relative">
+                                <input type="checkbox" id="admin-view-switch" class="sr-only" checked>
+                                <div class="switch-bg block bg-gray-200 w-10 h-6 rounded-full"></div>
+                                <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition"></div>
+                            </div>
+                        </label>
+                        <span class="font-semibold">Vista Admin</span>
+                    </div>
                     <span class="text-sm">ADMIN</span>
                     <button class="p-1 rounded-full"><svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg></button>
                 </div>
@@ -117,6 +129,7 @@
                 <div id="content-admin-nomina" class="content-admin-section hidden"><h2 class="text-xl font-semibold">Contenido de Sucursales Nómina</h2></div>
                 <div id="content-admin-recursos" class="content-admin-section hidden"><h2 class="text-xl font-semibold">Contenido de Recursos Financieros</h2></div>
                 <div id="content-admin-configuracion" class="content-admin-section hidden"><h2 class="text-xl font-semibold">Contenido de Configuración Admin</h2></div>
+                <div id="content-admin-client-detail" class="content-admin-section hidden"></div>
             </main>
         </div>
     </div>
@@ -126,37 +139,85 @@
     <div id="invoice-detail-modal" class="modal-backdrop hidden"></div>
     <div id="plan-change-modal" class="modal-backdrop hidden"></div>
     <div id="quote-request-modal" class="modal-backdrop hidden"></div>
+    <div id="billing-rules-modal" class="modal-backdrop hidden"></div>
+    <div id="suspend-client-modal" class="modal-backdrop hidden"></div>
+    <div id="activate-client-modal" class="modal-backdrop hidden"></div>
+    <div id="enable-service-modal" class="modal-backdrop hidden"></div>
 
     <script>
         // --- DATA MODEL ---
         const data = {
              "account": { "accountId": "acc_12345", "companyName": "Nóminas Fáciles S.A. de C.V." },
-             "subscription": { "planId": "pro_monthly", "planName": "Growth", "billingCycle": "monthly", "status": "active", "costPerEmployee": 99, "activeEmployees": 42, "addons": [
+             "subscription": { "planId": "growth_monthly", "planName": "Growth", "billingCycle": "monthly", "status": "active", "costPerEmployee": 80, "activeEmployees": 42, "addons": [
                 { "id": "addon_support", "name": "Soporte y Asesoría Técnica en Nómina y Seguridad Social", "cost": 500 },
                 { "id": "addon_legal", "name": "Asesoría y Consultoría Legal Laboral", "cost": 2000 }
              ] },
-             "billing": { "cycleStartDate": "2025-08-01T00:00:00Z", "cycleEndDate": "2025-08-31T23:59:59Z", "paymentDueDate": "2025-09-10T23:59:59Z", "projectedCost": { "employees": 4158, "addons": 2500, "proratedCredits": -50, "total": 6608 } },
+             "billing": { "cycleStartDate": "2025-08-01T00:00:00Z", "cycleEndDate": "2025-08-31T23:59:59Z", "paymentDueDate": "2025-09-10T23:59:59Z", "projectedCost": { "employees": 3360, "addons": 2500, "proratedCredits": -50, "total": 5810 } },
              "invoices": [
-                { "invoiceId": "inv_99887", "periodStart": "2025-08-01", "periodEnd": "2025-08-31", "totalAmount": 6608.00, "status": "pending", "pdfUrl": "#"},
+                { "invoiceId": "inv_99887", "periodStart": "2025-08-01", "periodEnd": "2025-08-31", "totalAmount": 5810.00, "status": "pending", "pdfUrl": "#"},
                 { "invoiceId": "inv_78910", "periodStart": "2025-07-01", "periodEnd": "2025-07-31", "totalAmount": 4460.00, "status": "paid", "pdfUrl": "#" }
             ],
-             "availablePlans": [{ "planId": "growth_monthly", "name": "Growth", "monthlyPerEmployeeCost": 99, "annualDiscountPercentage": 20, "features": ["Todo lo de Básico", "Reportes avanzados"] }],
+             "availablePlans": [
+                { "planId": "starter_monthly", "name": "Starter", "monthlyPerEmployeeCost": 60, "features": ["Cálculo, Seguridad Social, Kardex", "Expediente Laboral", "Timbrados limitados (100)", "Prenómina excel", "Generación de Layouts bancarios", "Envío de timbres por correo"] },
+                { "planId": "growth_monthly", "name": "Growth", "monthlyPerEmployeeCost": 80, "features": ["Cálculo, Seguridad Social, Kardex", "Expediente Digital", "Timbrados ilimitados", "Reportería limitada (2 reportes)"] },
+                { "planId": "enterprise_monthly", "name": "Enterprise", "monthlyPerEmployeeCost": 100, "features": ["Cálculo, Seguridad Social, Kardex", "Expediente Digital", "Timbrados ilimitados", "Reportes ilimitados", "Generación de contratos", "Reportería especializada", "Proveedores y terceros"] }
+             ],
              "availableAddons": [
-                { "id": "addon_support", "name": "Soporte y Asesoría Técnica en Nómina y Seguridad Social", "description": "Expertos a tu disposición para resolver dudas técnicas.", "longDescription": "Nuestro equipo de soporte especializado está listo para ayudarte con cualquier consulta técnica que tengas sobre la plataforma, el cálculo de impuestos, las cuotas obrero-patronales y más. Asegura que tu nómina siempre esté correcta y a tiempo.", "startingPrice": 500, "priceSuffix": "", "imageUrl": "https://placehold.co/600x400/E0F2FE/0891B2?text=Soporte+Técnico", "availableSlots": ["2025-09-08 10:00 AM", "2025-09-08 02:00 PM", "2025-09-09 11:00 AM"] },
-                { "id": "addon_legal", "name": "Asesoría y Consultoría Legal Laboral", "description": "Acceso a nuestra red de abogados laboralistas para consultas.", "longDescription": "Mantente protegido y cumple con la ley. Nuestros abogados asociados pueden asesorarte en la redacción de contratos, procesos de terminación laboral, y cualquier otra duda relacionada con la Ley Federal del Trabajo en México.", "startingPrice": 2000, "priceSuffix": "", "imageUrl": "https://placehold.co/600x400/FFFBEB/B45309?text=Asesoría+Legal", "availableSlots": ["2025-09-10 10:00 AM", "2025-09-11 12:00 PM"] },
-                { "id": "addon_fiscal", "name": "Asesoría y Consultoría Contable-Fiscal", "description": "Optimiza tu carga fiscal y asegura el correcto registro contable.", "longDescription": "Un correcto tratamiento contable y fiscal de la nómina es crucial. Nuestros consultores te ayudan a optimizar tu estrategia fiscal, aplicar deducciones correctamente y generar los reportes necesarios para tus declaraciones.", "startingPrice": 500, "priceSuffix": "", "imageUrl": "https://placehold.co/600x400/F0FDF4/16A34A?text=Consultoría+Fiscal", "availableSlots": ["2025-09-09 09:00 AM", "2025-09-09 04:00 PM"] },
-                { "id": "addon_integrations", "name": "Integraciones a Sistemas Contables", "description": "Conectamos BeePayroll con tu sistema contable (ERP).", "longDescription": "Ahorra horas de trabajo manual. Desarrollamos integraciones a la medida para que la información de tu nómina se vea reflejada automáticamente en tu sistema contable o ERP, asegurando consistencia y eliminando errores.", "startingPrice": 10000, "priceSuffix": "", "imageUrl": "https://placehold.co/600x400/EFE2FF/4F46E5?text=Integraciones", "availableSlots": ["2025-09-12 10:00 AM", "2025-09-15 10:00 AM"] },
-                { "id": "addon_beepayroll_app", "name": "App del Trabajador (Beepayroll App)", "description": "Permite a tus empleados consultar sus recibos y solicitar vacaciones.", "longDescription": "Empodera a tu equipo con nuestra app móvil. Tus trabajadores podrán acceder a sus recibos de nómina al instante, gestionar solicitudes de vacaciones, y registrar su entrada y salida, todo desde la comodidad de su teléfono.", "startingPrice": 40, "priceSuffix": " / trabajador / mensual", "imageUrl": "https://placehold.co/600x400/FEF2F2/DC2626?text=Beepayroll+App", "availableSlots": ["2025-09-08 03:00 PM", "2025-09-09 03:00 PM"] },
-                { "id": "addon_multicompany", "name": "Multicompañía (Registros Patronales)", "description": "Administra múltiples empresas desde una sola cuenta.", "longDescription": "Ideal para contadores o grupos corporativos. Con esta funcionalidad, puedes gestionar la nómina de diferentes razones sociales o registros patronales bajo una misma cuenta, simplificando la administración y el acceso.", "startingPrice": 100, "priceSuffix": " / mensuales", "imageUrl": "https://placehold.co/600x400/EFF6FF/1D4ED8?text=Multicompañía", "availableSlots": ["2025-09-10 04:00 PM", "2025-09-11 04:00 PM"] }
+                { "id": "addon_support", "name": "Soporte y Asesoría Técnica en Nómina y Seguridad Social", "description": "Expertos a tu disposición para resolver dudas técnicas.", "longDescription": "Nuestro equipo de soporte especializado está listo para ayudarte con cualquier consulta técnica que tengas sobre la plataforma, el cálculo de impuestos, las cuotas obrero-patronales y más. Asegura que tu nómina siempre esté correcta y a tiempo.", "startingPrice": 500, "priceSuffix": "", "imageUrl": "https://placehold.co/600x400/E0F2FE/0891B2?text=Soporte+Técnico" },
+                { "id": "addon_legal", "name": "Asesoría y Consultoría Legal Laboral", "description": "Acceso a nuestra red de abogados laboralistas para consultas.", "longDescription": "Mantente protegido y cumple con la ley. Nuestros abogados asociados pueden asesorarte en la redacción de contratos, procesos de terminación laboral, y cualquier otra duda relacionada con la Ley Federal del Trabajo en México.", "startingPrice": 2000, "priceSuffix": "", "imageUrl": "https://placehold.co/600x400/FFFBEB/B45309?text=Asesoría+Legal" },
+                { "id": "addon_fiscal", "name": "Asesoría y Consultoría Contable-Fiscal", "description": "Optimiza tu carga fiscal y asegura el correcto registro contable.", "longDescription": "Un correcto tratamiento contable y fiscal de la nómina es crucial. Nuestros consultores te ayudan a optimizar tu estrategia fiscal, aplicar deducciones correctamente y generar los reportes necesarios para tus declaraciones.", "startingPrice": 500, "priceSuffix": "", "imageUrl": "https://placehold.co/600x400/F0FDF4/16A34A?text=Consultoría+Fiscal" },
+                { "id": "addon_integrations", "name": "Integraciones a Sistemas Contables", "description": "Conectamos BeePayroll con tu sistema contable (ERP).", "longDescription": "Ahorra horas de trabajo manual. Desarrollamos integraciones a la medida para que la información de tu nómina se vea reflejada automáticamente en tu sistema contable o ERP, asegurando consistencia y eliminando errores.", "startingPrice": 10000, "priceSuffix": "", "imageUrl": "https://placehold.co/600x400/EFE2FF/4F46E5?text=Integraciones" },
+                { "id": "addon_beepayroll_app", "name": "App del Trabajador (Beepayroll App)", "description": "Permite a tus empleados consultar sus recibos y solicitar vacaciones.", "longDescription": "Empodera a tu equipo con nuestra app móvil. Tus trabajadores podrán acceder a sus recibos de nómina al instante, gestionar solicitudes de vacaciones, y registrar su entrada y salida, todo desde la comodidad de su teléfono.", "startingPrice": 40, "priceSuffix": " / trabajador / mensual", "imageUrl": "https://placehold.co/600x400/FEF2F2/DC2626?text=Beepayroll+App" },
+                { "id": "addon_multicompany", "name": "Multicompañía (Registros Patronales)", "description": "Administra múltiples empresas desde una sola cuenta.", "longDescription": "Ideal para contadores o grupos corporativos. Con esta funcionalidad, puedes gestionar la nómina de diferentes razones sociales o registros patronales bajo una misma cuenta, simplificando la administración y el acceso.", "startingPrice": 100, "priceSuffix": " / mensuales", "imageUrl": "https://placehold.co/600x400/EFF6FF/1D4ED8?text=Multicompañía" }
             ]
         };
 
         const adminData = {
             clients: [
-                { id: 'cli_001', name: 'Nóminas Fáciles S.A. de C.V.', rfc: 'NFA123456XYZ', status: 'Activo' },
-                { id: 'cli_002', name: 'Constructora del Sureste', rfc: 'CSU987654ABC', status: 'Activo' },
-                { id: 'cli_003', name: 'Transportes Rápidos del Norte', rfc: 'TRN456789DEF', status: 'Suspendido' },
-                { id: 'cli_004', name: 'Servicios Integrales de Limpieza', rfc: 'SIL159263GHI', status: 'Activo' },
+                { 
+                    id: 'cli_001', 
+                    name: 'Nóminas Fáciles S.A. de C.V.', 
+                    rfc: 'NFA123456XYZ', 
+                    email: 'contacto@nominasfaciles.com',
+                    phone: '+52 55 1234 5678',
+                    status: 'Activo',
+                    subscription: data.subscription,
+                    billing: data.billing,
+                    invoices: data.invoices
+                },
+                { 
+                    id: 'cli_002', 
+                    name: 'Constructora del Sureste', 
+                    rfc: 'CSU987654ABC', 
+                    email: 'admin@constructorasureste.com',
+                    phone: '+52 999 876 5432',
+                    status: 'Activo',
+                    subscription: { planId: "starter_monthly", planName: "Starter", billingCycle: "monthly", status: "active", costPerEmployee: 60, activeEmployees: 25, addons: [] },
+                    billing: { cycleStartDate: "2025-08-01T00:00:00Z", cycleEndDate: "2025-08-31T23:59:59Z", paymentDueDate: "2025-09-10T23:59:59Z", projectedCost: { employees: 1500, addons: 0, proratedCredits: 0, total: 1500 } },
+                    invoices: [{ invoiceId: "inv_99888", periodStart: "2025-08-01", periodEnd: "2025-08-31", totalAmount: 1500.00, status: "paid", pdfUrl: "#"}]
+                },
+                { 
+                    id: 'cli_003', 
+                    name: 'Transportes Rápidos del Norte', 
+                    rfc: 'TRN456789DEF', 
+                    email: 'gerencia@transportesnorte.com',
+                    phone: '+52 81 5555 1234',
+                    status: 'Suspendido',
+                    subscription: { planId: "growth_monthly", planName: "Growth", billingCycle: "monthly", status: "suspended", costPerEmployee: 80, activeEmployees: 15, addons: [{ id: "addon_support", name: "Soporte y Asesoría Técnica", cost: 500 }] },
+                    billing: { cycleStartDate: "2025-08-01T00:00:00Z", cycleEndDate: "2025-08-31T23:59:59Z", paymentDueDate: "2025-09-10T23:59:59Z", projectedCost: { employees: 1200, addons: 500, proratedCredits: 0, total: 1700 } },
+                    invoices: [{ invoiceId: "inv_99889", periodStart: "2025-08-01", periodEnd: "2025-08-31", totalAmount: 1700.00, status: "pending", pdfUrl: "#"}]
+                },
+                { 
+                    id: 'cli_004', 
+                    name: 'Servicios Integrales de Limpieza', 
+                    rfc: 'SIL159263GHI', 
+                    email: 'info@servicioslimpieza.com',
+                    phone: '+52 33 4444 7777',
+                    status: 'Activo',
+                    subscription: { planId: "enterprise_monthly", planName: "Enterprise", billingCycle: "monthly", status: "active", costPerEmployee: 100, activeEmployees: 8, addons: [{ id: "addon_legal", name: "Asesoría y Consultoría Legal Laboral", cost: 2000 }] },
+                    billing: { cycleStartDate: "2025-08-01T00:00:00Z", cycleEndDate: "2025-08-31T23:59:59Z", paymentDueDate: "2025-09-10T23:59:59Z", projectedCost: { employees: 800, addons: 2000, proratedCredits: 0, total: 2800 } },
+                    invoices: [{ invoiceId: "inv_99890", periodStart: "2025-08-01", periodEnd: "2025-08-31", totalAmount: 2800.00, status: "paid", pdfUrl: "#"}]
+                },
             ]
         };
 
@@ -174,54 +235,135 @@
         // --- RENDER FUNCTIONS FOR CLIENT VIEW ---
         function renderFacturacionContent() {
             const container = document.getElementById('content-facturacion');
-            const pendingInvoice = data.invoices.find(inv => inv.status === 'pending');
-            let noticeHTML = '';
-            if (pendingInvoice) {
-                const today = new Date('2025-09-05T10:00:00Z');
-                const dueDate = new Date(data.billing.paymentDueDate);
-                const diffDays = Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24));
-                noticeHTML = `<div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded-md flex items-center justify-between" role="alert"><p><strong class="font-bold">Aviso Importante:</strong> Tu fecha de pago es en ${diffDays} días.</p><button onclick="showPaymentModal()" class="bg-yellow-500 text-white font-bold py-2 px-4 rounded hover:bg-yellow-600">Pagar</button></div>`;
-            }
             
+            // Banner amarillo con aviso de pago
+            const noticeHTML = `<div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded-md flex items-center justify-between" role="alert"><p><strong class="font-bold">Aviso Importante:</strong> Tu fecha de pago es en 6 días.</p><button onclick="showPaymentModal()" class="bg-yellow-500 text-white font-bold py-2 px-4 rounded hover:bg-yellow-600">Pagar</button></div>`;
+            
+            // Resumen del Ciclo Actual
             const summaryHTML = `
-                <div class="bg-white p-6 rounded-lg shadow-sm">
+                <div class="max-w-4xl">
+                    <div class="bg-white p-6 rounded-lg shadow-sm border">
                     <div class="flex justify-between items-center mb-4">
                          <h2 class="text-xl font-semibold">Resumen del Ciclo Actual</h2>
-                         <a href="#" title="¿Cómo se calcula mi facturación?" class="text-gray-400 hover:text-indigo-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.79 4 4 0 2.21-1.79 4-4 4-.432 0-.84-.07-1.22-.195M12 4v.01M12 20v.01M4 12h.01M20 12h.01M6.343 6.343l.01.01M17.657 17.657l.01.01M6.343 17.657l.01-.01M17.657 6.343l.01.01"></path></svg></a>
+                             <button onclick="showBillingRulesModal()" title="¿Cómo se calcula mi facturación?" class="text-gray-400 hover:text-indigo-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.79 4 4 0 2.21-1.79 4-4 4-.432 0-.84-.07-1.22-.195M12 4v.01M12 20v.01M4 12h.01M20 12h.01M6.343 6.343l.01.01M17.657 17.657l.01.01M6.343 17.657l.01-.01M17.657 6.343l.01.01"></path></svg></button>
                     </div>
                     <div class="space-y-4">
                         <div>
                             <p class="text-sm text-gray-500">Plan actual</p>
-                            <p class="text-lg font-medium">${data.subscription.planName} (${data.subscription.billingCycle === 'monthly' ? 'Mensual' : 'Anual'})</p>
+                                <p class="text-lg font-medium">${data.subscription.planName} (Mensual)</p>
                         </div>
                         <div class="border-t pt-4">
                             <p class="text-sm text-gray-500">Costo del ciclo</p>
                             <p class="text-4xl font-bold text-indigo-600">${formatCurrency(data.billing.projectedCost.total)}</p>
                         </div>
-                        <div class="text-sm space-y-2 text-gray-600 pt-2">
-                            <div class="flex justify-between font-semibold"><span>Detalle del cobro</span><span>Monto</span></div>
-                            <div class="flex justify-between"><span>Costo por ${data.subscription.activeEmployees} empleados</span><span>${formatCurrency(data.billing.projectedCost.employees)}</span></div>
-                            <div class="flex justify-between"><span>Servicios adicionales (${data.subscription.addons.length})</span><span>${formatCurrency(data.billing.projectedCost.addons)}</span></div>
-                            ${data.subscription.addons.map(addon => `<div class="flex justify-between pl-4 text-gray-500"><span>${addon.name}</span><span>${formatCurrency(addon.cost)}</span></div>`).join('')}
-                            <div class="flex justify-between text-green-600"><span>Créditos y prorrateos</span><span>-${formatCurrency(Math.abs(data.billing.projectedCost.proratedCredits))}</span></div>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <div class="text-sm space-y-3 text-gray-600">
+                                    <div class="flex justify-between items-center font-semibold border-b pb-2"><span>Detalle del cobro</span><span>Monto</span></div>
+                                    <div class="flex justify-between items-center"><span>Costo por ${data.subscription.activeEmployees} empleados</span><span class="font-medium">${formatCurrency(data.billing.projectedCost.employees)}</span></div>
+                                    <div class="flex justify-between items-center"><span>Servicios adicionales (${data.subscription.addons.length})</span><span class="font-medium">${formatCurrency(data.billing.projectedCost.addons)}</span></div>
+                                    ${data.subscription.addons.map(addon => `<div class="flex justify-between items-center pl-4 text-gray-500"><span class="text-sm">${addon.name}</span><span class="font-medium">${formatCurrency(addon.cost)}</span></div>`).join('')}
+                                    <div class="flex justify-between items-center text-green-600 border-t pt-2"><span>Créditos y prorrateos</span><span class="font-medium">-${formatCurrency(Math.abs(data.billing.projectedCost.proratedCredits))}</span></div>
+                                </div>
+                            </div>
                         </div>
+                    </div>
+                </div>`;
+            
+            // Sección Gestionar Plan
+            const planManagementHTML = `
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-semibold">Gestionar Plan</h2>
+                        <div class="flex items-center space-x-3">
+                            <span class="text-sm text-gray-500">Mensual</span>
+                            <label class="flex items-center cursor-pointer">
+                                <div class="relative">
+                                    <input type="checkbox" id="billing-cycle-switch" class="sr-only" onchange="toggleBillingCycle()">
+                                    <div class="switch-bg block bg-gray-200 w-10 h-6 rounded-full"></div>
+                                    <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition"></div>
+                                </div>
+                            </label>
+                            <span class="text-sm font-semibold">Anual</span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-6xl mx-auto">
+                        ${data.availablePlans.map(plan => {
+                            const isCurrentPlan = plan.planId === data.subscription.planId;
+                            const monthlyPrice = plan.monthlyPerEmployeeCost;
+                            const annualPrice = Math.round(monthlyPrice * 12 * 0.8); // 20% descuento anual
+                            return `
+                                <div class="border rounded-lg p-5 flex flex-col ${isCurrentPlan ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200'} min-h-[500px]">
+                                    <div class="flex justify-between items-start mb-4">
+                                        <h3 class="text-xl font-bold text-gray-900">${plan.name}</h3>
+                                        ${isCurrentPlan ? '<span class="bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Plan Actual</span>' : ''}
+                                    </div>
+                                    <div class="mb-6">
+                                        <div class="monthly-price">
+                                            <div class="text-4xl font-bold text-gray-900">${formatCurrency(monthlyPrice)}</div>
+                                            <div class="text-gray-500 text-sm">por trabajador al mes</div>
+                                        </div>
+                                        <div class="annual-price hidden">
+                                            <div class="text-4xl font-bold text-gray-900">${formatCurrency(annualPrice)}</div>
+                                            <div class="text-gray-500 text-sm">por trabajador al año</div>
+                                            <div class="text-sm text-green-600 font-medium mt-1">Ahorra 20%</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow">
+                                        <ul class="space-y-3 text-sm text-gray-600">
+                                            ${plan.features.map(feature => `<li class="flex items-start"><svg class="w-4 h-4 mr-3 text-indigo-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg><span>${feature}</span></li>`).join('')}
+                                        </ul>
+                                    </div>
+                                    <div class="mt-6">
+                                        ${!isCurrentPlan ? `<button class="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg hover:bg-indigo-700 font-semibold transition-colors">Cambiar Plan</button>` : '<div class="w-full bg-gray-100 text-gray-500 py-3 px-4 rounded-lg text-center font-semibold">Plan Actual</div>'}
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
                     </div>
                 </div>`;
             
             const historyHTML = renderInvoiceHistoryHTML();
             
-            container.innerHTML = noticeHTML + summaryHTML + historyHTML;
+            container.innerHTML = noticeHTML + summaryHTML + planManagementHTML + historyHTML;
         }
         
         function renderServiciosContent() {
             const container = document.getElementById('content-servicios');
             const activeAddonIds = new Set(data.subscription.addons.map(a => a.id));
-            const addonsHTML = `<div class="bg-white p-6 rounded-lg shadow-sm"><h2 class="text-xl font-semibold mb-6">Explora Nuestros Servicios Adicionales</h2><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">${data.availableAddons.map(addon => { const isActive = activeAddonIds.has(addon.id); return `<div class="border rounded-lg overflow-hidden flex flex-col shadow-sm hover:shadow-lg transition-shadow"><img src="${addon.imageUrl}" alt="${addon.name}" class="w-full h-40 object-cover"><div class="p-4 flex flex-col flex-grow"><h4 class="font-bold">${addon.name}</h4><p class="text-sm text-gray-600 mt-1 mb-4 flex-grow">${addon.description}</p><div class="mt-auto"><p class="text-sm text-gray-500">Desde <span class="text-xl font-semibold text-gray-800">${formatCurrency(addon.startingPrice)}</span><span class="text-xs">${addon.priceSuffix || ''}</span></p><button ${isActive ? 'disabled' : `onclick="showQuoteRequestModal('${addon.id}')"`} class="w-full mt-4 ${isActive ? 'bg-green-100 text-green-700 cursor-not-allowed' : 'bg-indigo-100 text-indigo-700 hover:bg-indigo-200'} px-4 py-2 rounded-lg text-sm font-semibold">${isActive ? 'Servicio Activo' : 'Solicitar Cotización'}</button></div></div></div>` }).join('')}</div></div>`;
+            
+            const addonsHTML = `
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <h2 class="text-xl font-semibold mb-6">Explora Nuestros Servicios Adicionales</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        ${data.availableAddons.map(addon => {
+                            const isActive = activeAddonIds.has(addon.id);
+                            return `
+                                <div class="border rounded-lg overflow-hidden flex flex-col shadow-sm hover:shadow-lg transition-shadow cursor-pointer" onclick="showQuoteRequestModal('${addon.id}')">
+                                    <img src="${addon.imageUrl}" alt="${addon.name}" class="w-full h-40 object-cover">
+                                    <div class="p-4 flex flex-col flex-grow">
+                                        <h4 class="font-bold text-gray-900 mb-2">${addon.name}</h4>
+                                        <p class="text-sm text-gray-600 mb-4 flex-grow">${addon.description}</p>
+                                        <div class="mt-auto">
+                                            <p class="text-sm text-gray-500 mb-3">
+                                                Desde <span class="text-xl font-semibold text-gray-800">${formatCurrency(addon.startingPrice)}</span>
+                                                <span class="text-xs text-gray-500">${addon.priceSuffix || ''}</span>
+                                            </p>
+                                            <button class="w-full ${isActive ? 'bg-green-100 text-green-700 cursor-not-allowed' : 'bg-indigo-100 text-indigo-700 hover:bg-indigo-200'} px-4 py-2 rounded-lg text-sm font-semibold transition-colors">
+                                                ${isActive ? 'Servicio Activo' : 'Ver Detalles'}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
             container.innerHTML = addonsHTML;
         }
 
         function renderInvoiceHistoryHTML() {
-            const invoicesHTML = data.invoices.map(invoice => `<tr><td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${invoice.invoiceId}</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formatDate(invoice.periodStart)} al ${formatDate(invoice.periodEnd)}</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formatCurrency(invoice.totalAmount)}</td><td class="px-6 py-4 whitespace-nowrap text-sm"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${invoice.status === 'paid' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">${invoice.status === 'paid' ? 'Pagada' : 'Pendiente'}</span></td><td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"><a href="${invoice.pdfUrl}" class="text-indigo-600 hover:text-indigo-900">Ver PDF</a></td></tr>`).join('');
+            const invoicesHTML = data.invoices.map(invoice => `<tr><td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${invoice.invoiceId}</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formatDate(invoice.periodStart)} al ${formatDate(invoice.periodEnd)}</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formatCurrency(invoice.totalAmount)}</td><td class="px-6 py-4 whitespace-nowrap text-sm"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${invoice.status === 'paid' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">${invoice.status === 'paid' ? 'Pagada' : 'Pendiente'}</span></td><td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"><a href="${invoice.pdfUrl}" class="text-indigo-600 hover:text-indigo-900">Descargar PDF</a></td></tr>`).join('');
             return `<div class="bg-white p-6 rounded-lg shadow-sm"><h2 class="text-xl font-semibold mb-4">Historial de facturas</h2><div class="overflow-x-auto"><table class="min-w-full divide-y divide-gray-200"><thead class="bg-gray-50"><tr><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID de factura</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Periodo</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Monto</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estatus</th><th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th></tr></thead><tbody class="bg-white divide-y divide-gray-200">${invoicesHTML}</tbody></table></div></div>`;
         }
 
@@ -229,9 +371,11 @@
         function renderAdminView() {
             const container = document.getElementById('content-admin-saas-facturacion');
             const clientsHTML = adminData.clients.map(client => `
-                <tr class="hover:bg-gray-700">
+                <tr class="hover:bg-gray-700 cursor-pointer" onclick="showClientDetail('${client.id}')">
                     <td class="p-4 whitespace-nowrap text-sm font-medium">${client.name}</td>
                     <td class="p-4 whitespace-nowrap text-sm text-gray-400">${client.rfc}</td>
+                    <td class="p-4 whitespace-nowrap text-sm text-gray-400">${client.email}</td>
+                    <td class="p-4 whitespace-nowrap text-sm text-gray-400">${client.phone}</td>
                     <td class="p-4 whitespace-nowrap text-sm">
                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${client.status === 'Activo' ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'}">
                             ${client.status}
@@ -246,6 +390,8 @@
                             <tr>
                                 <th scope="col" class="p-4 text-left text-xs font-medium uppercase tracking-wider">Nombre Comercial</th>
                                 <th scope="col" class="p-4 text-left text-xs font-medium uppercase tracking-wider">RFC</th>
+                                <th scope="col" class="p-4 text-left text-xs font-medium uppercase tracking-wider">Correo de Contacto</th>
+                                <th scope="col" class="p-4 text-left text-xs font-medium uppercase tracking-wider">Número de Contacto</th>
                                 <th scope="col" class="p-4 text-left text-xs font-medium uppercase tracking-wider">Estatus</th>
                             </tr>
                         </thead>
@@ -267,14 +413,649 @@
             otherBtn.addEventListener('click', () => { otherInfo.classList.remove('hidden'); bbvaInfo.classList.add('hidden'); otherBtn.classList.add('text-indigo-600', 'border-indigo-600'); bbvaBtn.classList.remove('text-indigo-600', 'border-indigo-600'); bbvaBtn.classList.add('text-gray-500', 'border-transparent'); });
         }
 
-        function showQuoteRequestModal(addonId) {
-            const addon = data.availableAddons.find(a => a.id === addonId); if (!addon) return;
-            const modalContainer = document.getElementById('quote-request-modal');
-            modalContainer.innerHTML = `<div class="modal-content !max-w-4xl w-full"><div class="flex justify-between items-start mb-4"><h3 class="text-2xl font-bold text-gray-900">${addon.name}</h3><button onclick="closeModal('quote-request-modal')" class="text-gray-400 hover:text-gray-600 text-3xl leading-none">&times;</button></div><div class="grid grid-cols-1 md:grid-cols-2 gap-8"><div><img src="${addon.imageUrl.replace('600x400', '800x600')}" alt="${addon.name}" class="rounded-lg shadow-md w-full object-cover aspect-[4/3]"></div><div class="space-y-4 flex flex-col"><p class="text-gray-600 flex-grow">${addon.longDescription}</p><div><label for="schedule-slot" class="block text-sm font-medium text-gray-700">Agenda una videollamada con un experto:</label><select id="schedule-slot" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"><option>Selecciona un horario</option>${addon.availableSlots.map(slot => `<option value="${slot}">${slot}</option>`).join('')}</select></div><button onclick="alert('Llamada agendada para ' + document.getElementById('schedule-slot').value); closeModal('quote-request-modal');" class="w-full bg-indigo-600 text-white px-4 py-2.5 rounded-lg font-semibold hover:bg-indigo-700">Agendar Llamada</button></div></div></div>`;
+        function showBillingRulesModal() {
+            const modalContainer = document.getElementById('billing-rules-modal');
+            modalContainer.innerHTML = `
+                <div class="modal-content">
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="text-xl font-semibold">Reglas de Facturación</h3>
+                        <button onclick="closeModal('billing-rules-modal')" class="text-gray-400 hover:text-gray-600 text-3xl leading-none">&times;</button>
+                    </div>
+                    <div class="space-y-4 text-sm text-gray-600">
+                        <div class="flex items-start">
+                            <span class="bg-indigo-100 text-indigo-800 text-xs font-medium px-2 py-1 rounded-full mr-3 mt-0.5">1</span>
+                            <p>Los montos corresponden al monto de facturación de la fecha de inicio hasta la fecha de corte del periodo.</p>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="bg-indigo-100 text-indigo-800 text-xs font-medium px-2 py-1 rounded-full mr-3 mt-0.5">2</span>
+                            <p>Se cuenta como trabajador facturable el trabajador que se incluyó en un periodo de nómina que se haya calculado dentro del periodo de facturación antes descrito.</p>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="bg-indigo-100 text-indigo-800 text-xs font-medium px-2 py-1 rounded-full mr-3 mt-0.5">3</span>
+                            <p>El sistema negará la entrada al usuario 15 días después de la fecha de pago si no se consolida el pago.</p>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="bg-indigo-100 text-indigo-800 text-xs font-medium px-2 py-1 rounded-full mr-3 mt-0.5">4</span>
+                            <p>Los créditos y prorrateos se aplican automáticamente cuando hay bajas de trabajadores durante el periodo de facturación.</p>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="bg-indigo-100 text-indigo-800 text-xs font-medium px-2 py-1 rounded-full mr-3 mt-0.5">5</span>
+                            <p>Los servicios adicionales se facturan de forma independiente al plan base y se cobran por separado.</p>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="bg-indigo-100 text-indigo-800 text-xs font-medium px-2 py-1 rounded-full mr-3 mt-0.5">6</span>
+                            <p>Los cambios de plan se aplican desde el siguiente ciclo de facturación, no en el periodo actual.</p>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="bg-indigo-100 text-indigo-800 text-xs font-medium px-2 py-1 rounded-full mr-3 mt-0.5">7</span>
+                            <p>Las facturas se generan automáticamente el primer día de cada mes para el periodo anterior.</p>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="bg-indigo-100 text-indigo-800 text-xs font-medium px-2 py-1 rounded-full mr-3 mt-0.5">8</span>
+                            <p>En caso de dudas sobre la facturación, puedes contactar a nuestro equipo de soporte técnico.</p>
+                        </div>
+                    </div>
+                </div>
+            `;
             modalContainer.classList.remove('hidden');
         }
+
+        function showQuoteRequestModal(addonId) {
+            const addon = data.availableAddons.find(a => a.id === addonId); 
+            if (!addon) return;
+            
+            const modalContainer = document.getElementById('quote-request-modal');
+            modalContainer.innerHTML = `
+                <div class="modal-content !max-w-6xl w-full h-[80vh] flex flex-col">
+                    <div class="flex justify-between items-start mb-6">
+                        <h3 class="text-2xl font-bold text-gray-900">${addon.name}</h3>
+                        <button onclick="closeModal('quote-request-modal')" class="text-gray-400 hover:text-gray-600 text-3xl leading-none">&times;</button>
+                    </div>
+                    <div class="flex flex-1 gap-8 overflow-hidden">
+                        <div class="w-2/5">
+                            <img src="${addon.imageUrl.replace('600x400', '800x600')}" alt="${addon.name}" class="w-full h-full object-cover rounded-lg shadow-md">
+                        </div>
+                        <div class="w-3/5 flex flex-col space-y-6">
+                            <div class="flex-grow">
+                                <h4 class="text-lg font-semibold text-gray-900 mb-3">Descripción del Servicio</h4>
+                                <p class="text-gray-600 leading-relaxed">${addon.longDescription}</p>
+                            </div>
+                            <div class="space-y-4">
+                                <div class="bg-blue-50 p-4 rounded-lg">
+                                    <p class="text-sm text-blue-800">
+                                        <strong>¿Interesado en este servicio?</strong><br>
+                                        Nuestro equipo se pondrá en contacto contigo para coordinar una demostración personalizada.
+                                    </p>
+                                </div>
+                                <button onclick="contactSales()" class="w-full bg-indigo-600 text-white px-4 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors">
+                                    Solicitar Demo
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            modalContainer.classList.remove('hidden');
+        }
+
+        function contactSales() {
+            alert('¡Gracias por tu interés! Nuestro equipo de ventas se pondrá en contacto contigo en las próximas 24 horas para coordinar una demostración personalizada.');
+            closeModal('quote-request-modal');
+        }
+
+        function showClientDetail(clientId) {
+            const client = adminData.clients.find(c => c.id === clientId);
+            if (!client) return;
+
+            // Ocultar todas las secciones admin
+            document.querySelectorAll('.content-admin-section').forEach(section => section.classList.add('hidden'));
+            
+            // Mostrar la sección de detalle del cliente
+            const detailContainer = document.getElementById('content-admin-client-detail');
+            detailContainer.innerHTML = `
+                <div class="space-y-6">
+                    <!-- Header con botón de regreso -->
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <button onclick="goBackToClientsList()" class="flex items-center text-gray-400 hover:text-gray-300">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                                </svg>
+                                Volver a Lista de Clientes
+                            </button>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <span class="px-3 py-1 rounded-full text-sm font-medium ${client.status === 'Activo' ? 'bg-green-800 text-green-200' : 'bg-red-800 text-red-200'}">
+                                ${client.status}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Información del Cliente -->
+                    <div class="bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-700">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h2 class="text-3xl font-bold text-white">${client.name}</h2>
+                                <p class="text-gray-300 mt-2">${client.email} • ${client.phone}</p>
+                                <p class="text-sm text-gray-400 mt-1">RFC: ${client.rfc}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Controles de Estado -->
+                        <div class="bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-700">
+                            <h4 class="text-lg font-semibold mb-4 text-white">Control de Estado</h4>
+                            <div class="space-y-4">
+                                ${client.status === 'Activo' ? 
+                                    `<button onclick="suspendClient('${client.id}')" class="w-full bg-red-600 text-white px-4 py-3 rounded-lg hover:bg-red-700 font-semibold">Suspender Cliente</button>` :
+                                    `<button onclick="activateClient('${client.id}')" class="w-full bg-green-600 text-white px-4 py-3 rounded-lg hover:bg-green-700 font-semibold">Activar Cliente</button>`
+                                }
+                                <div class="text-sm text-gray-400">
+                                    ${client.status === 'Activo' ? 
+                                        'El cliente tiene acceso completo al sistema.' : 
+                                        'El cliente está suspendido y no puede acceder al sistema.'
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Información del Plan -->
+                        <div class="bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-700">
+                            <h4 class="text-lg font-semibold mb-4 text-white">Información del Plan</h4>
+                            <div class="space-y-3">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">Plan:</span>
+                                    <span class="font-medium text-white">${client.subscription.planName}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">Empleados:</span>
+                                    <span class="font-medium text-white">${client.subscription.activeEmployees}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">Ciclo:</span>
+                                    <span class="font-medium text-white">${client.subscription.billingCycle === 'monthly' ? 'Mensual' : 'Anual'}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">Servicios adicionales:</span>
+                                    <span class="font-medium text-white">${client.subscription.addons.length}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Resumen del Ciclo Actual -->
+                    <div class="bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-700">
+                        <h4 class="text-lg font-semibold mb-4 text-white">Resumen del Ciclo Actual</h4>
+                        
+                        <!-- Banner informativo -->
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <svg class="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm text-blue-700">
+                                        Al habilitar cualquier switch estás confirmando que los cargos se realizarán en su factura además de que se proporcionó correctamente los servicios adicionales, el usuario podrá ver esto en su resumen de facturación.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-700">
+                                <thead class="bg-gray-900">
+                                    <tr>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Concepto</th>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Cobro</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-gray-800 divide-y divide-gray-700">
+                                    <tr>
+                                        <td class="px-4 py-3 text-sm text-white">Costo por ${client.subscription.activeEmployees} empleados</td>
+                                        <td class="px-4 py-3 text-sm font-medium text-white">${formatCurrency(client.billing.projectedCost.employees)}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-4 py-3 text-sm text-white">Servicios adicionales (${client.subscription.addons.length})</td>
+                                        <td class="px-4 py-3 text-sm font-medium text-white">${formatCurrency(client.billing.projectedCost.addons)}</td>
+                                    </tr>
+                                    ${client.subscription.addons.map(addon => `
+                                        <tr>
+                                            <td class="px-4 py-3 text-sm text-gray-300 pl-8">${addon.name}</td>
+                                            <td class="px-4 py-3 text-sm">
+                                                <div class="flex items-center space-x-2">
+                                                    <label class="flex items-center cursor-pointer">
+                                                        <input type="checkbox" class="sr-only" onchange="showEnableServiceModal('${client.id}', '${addon.id}', this)" ${addon.billingEnabled ? 'checked' : ''}>
+                                                        <div class="relative">
+                                                            <div class="w-10 h-6 bg-gray-600 rounded-full shadow-inner"></div>
+                                                            <div class="absolute w-4 h-4 bg-white rounded-full shadow top-1 left-1 transition-transform ${addon.billingEnabled ? 'transform translate-x-4' : ''}"></div>
+                                                        </div>
+                                                    </label>
+                                                    <span class="text-sm font-medium text-white">${formatCurrency(addon.cost)}</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                    <tr class="bg-gray-900">
+                                        <td class="px-4 py-3 text-sm font-semibold text-white">Total</td>
+                                        <td class="px-4 py-3 text-sm font-bold text-lg text-white">${formatCurrency(client.billing.projectedCost.total)}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Historial de Facturas -->
+                    <div class="bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-700">
+                        <h4 class="text-lg font-semibold mb-4 text-white">Historial de Facturas</h4>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-700">
+                                <thead class="bg-gray-900">
+                                    <tr>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">ID de Factura</th>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Periodo</th>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Monto</th>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Estatus</th>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-gray-800 divide-y divide-gray-700">
+                                    ${client.invoices.map(invoice => `
+                                        <tr>
+                                            <td class="px-4 py-3 text-sm font-medium text-white">${invoice.invoiceId}</td>
+                                            <td class="px-4 py-3 text-sm text-gray-300">${formatDate(invoice.periodStart)} al ${formatDate(invoice.periodEnd)}</td>
+                                            <td class="px-4 py-3 text-sm text-gray-300">${formatCurrency(invoice.totalAmount)}</td>
+                                            <td class="px-4 py-3 text-sm">
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${invoice.status === 'paid' ? 'bg-green-800 text-green-200' : 'bg-yellow-800 text-yellow-200'}">
+                                                    ${invoice.status === 'paid' ? 'Pagada' : 'Pendiente'}
+                                                </span>
+                                            </td>
+                                            <td class="px-4 py-3 text-sm">
+                                                <div class="flex space-x-2">
+                                                    ${invoice.pdfUrl ? `
+                                                        <a href="${invoice.pdfUrl}" class="text-blue-400 hover:text-blue-300">Descargar factura .ZIP</a>
+                                                        <button onclick="document.getElementById('replace-invoice-input-${invoice.invoiceId}').click()" class="text-orange-400 hover:text-orange-300">
+                                                            Reemplazar factura .ZIP
+                                                        </button>
+                                                        <input type="file" id="replace-invoice-input-${invoice.invoiceId}" accept=".zip" class="hidden" onchange="handleInvoiceUpload('${invoice.invoiceId}', this)">
+                                                    ` : `
+                                                        <button onclick="document.getElementById('upload-invoice-input-${invoice.invoiceId}').click()" class="text-green-400 hover:text-green-300">
+                                                            Cargar factura .ZIP
+                                                        </button>
+                                                        <input type="file" id="upload-invoice-input-${invoice.invoiceId}" accept=".zip" class="hidden" onchange="handleInvoiceUpload('${invoice.invoiceId}', this)">
+                                                    `}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+            detailContainer.classList.remove('hidden');
+            
+            // Actualizar el título de la página
+            document.getElementById('admin-page-title').textContent = `Detalle de Cliente - ${client.name}`;
+        }
+
+        function goBackToClientsList() {
+            // Ocultar la sección de detalle del cliente
+            document.getElementById('content-admin-client-detail').classList.add('hidden');
+            
+            // Mostrar la lista de clientes
+            document.getElementById('content-admin-saas-facturacion').classList.remove('hidden');
+            
+            // Actualizar el título de la página
+            document.getElementById('admin-page-title').textContent = 'Lista de Clientes SaaS';
+            
+            // Asegurar que estamos en vista admin y sincronizar switches
+            switchToView(true);
+        }
+
+        function suspendClient(clientId) {
+            const client = adminData.clients.find(c => c.id === clientId);
+            if (!client) return;
+
+            const modalContainer = document.getElementById('suspend-client-modal');
+            modalContainer.innerHTML = `
+                <div class="modal-content">
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="text-xl font-semibold text-gray-900">Suspender Cliente</h3>
+                        <button onclick="closeModal('suspend-client-modal')" class="text-gray-400 hover:text-gray-600 text-3xl leading-none">&times;</button>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                                <div class="ml-3">
+                                    <h3 class="text-sm font-medium text-red-800">¿Estás seguro que deseas suspender al cliente?</h3>
+                                    <div class="mt-2 text-sm text-red-700">
+                                        <p>Ya no podrá acceder a la plataforma.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="space-y-3">
+                            <label class="flex items-start">
+                                <input type="checkbox" id="suspend-confirmation" class="mt-1 h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded">
+                                <span class="ml-2 text-sm text-gray-700">
+                                    Avisé al cliente de la suspensión de su cuenta y confirmo que deseo impedir su acceso a la plataforma
+                                </span>
+                            </label>
+                        </div>
+                        <div class="flex justify-end space-x-3 pt-4">
+                            <button onclick="closeModal('suspend-client-modal')" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                Cancelar
+                            </button>
+                            <button onclick="confirmSuspendClient('${clientId}')" id="confirm-suspend-btn" disabled class="px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                                Suspender Cliente
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            modalContainer.classList.remove('hidden');
+
+            // Habilitar/deshabilitar botón según checkbox
+            document.getElementById('suspend-confirmation').addEventListener('change', function() {
+                const confirmBtn = document.getElementById('confirm-suspend-btn');
+                confirmBtn.disabled = !this.checked;
+            });
+        }
+
+        function activateClient(clientId) {
+            const client = adminData.clients.find(c => c.id === clientId);
+            if (!client) return;
+
+            const modalContainer = document.getElementById('activate-client-modal');
+            modalContainer.innerHTML = `
+                <div class="modal-content">
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="text-xl font-semibold text-gray-900">Activar Cliente</h3>
+                        <button onclick="closeModal('activate-client-modal')" class="text-gray-400 hover:text-gray-600 text-3xl leading-none">&times;</button>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                                <div class="ml-3">
+                                    <h3 class="text-sm font-medium text-green-800">¿Estás seguro que deseas activar al cliente?</h3>
+                                    <div class="mt-2 text-sm text-green-700">
+                                        <p>Podrá acceder de nuevo a la plataforma y accederá a los módulos que tiene acceso. Se recomienda actualizar las facturas que ya pagó para mantener un historico actualizado.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="space-y-3">
+                            <label class="flex items-start">
+                                <input type="checkbox" id="activate-confirmation" class="mt-1 h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
+                                <span class="ml-2 text-sm text-gray-700">
+                                    Confirmo que deseo habilitar el acceso al cliente y reanudar su servicio
+                                </span>
+                            </label>
+                        </div>
+                        <div class="flex justify-end space-x-3 pt-4">
+                            <button onclick="closeModal('activate-client-modal')" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                Cancelar
+                            </button>
+                            <button onclick="confirmActivateClient('${clientId}')" id="confirm-activate-btn" disabled class="px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                                Activar Cliente
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            modalContainer.classList.remove('hidden');
+
+            // Habilitar/deshabilitar botón según checkbox
+            document.getElementById('activate-confirmation').addEventListener('change', function() {
+                const confirmBtn = document.getElementById('confirm-activate-btn');
+                confirmBtn.disabled = !this.checked;
+            });
+        }
+
+        function confirmSuspendClient(clientId) {
+            const client = adminData.clients.find(c => c.id === clientId);
+            if (client) {
+                client.status = 'Suspendido';
+                alert(`Cliente ${client.name} ha sido suspendido.`);
+                closeModal('suspend-client-modal');
+                // Refrescar la vista del detalle del cliente
+                showClientDetail(clientId);
+            }
+        }
+
+        function confirmActivateClient(clientId) {
+            const client = adminData.clients.find(c => c.id === clientId);
+            if (client) {
+                client.status = 'Activo';
+                alert(`Cliente ${client.name} ha sido activado.`);
+                closeModal('activate-client-modal');
+                // Refrescar la vista del detalle del cliente
+                showClientDetail(clientId);
+            }
+        }
+
+        function showServiceBillingInfo() {
+            const modalContainer = document.getElementById('billing-rules-modal');
+            modalContainer.innerHTML = `
+                <div class="modal-content">
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="text-xl font-semibold text-gray-900">Información sobre Servicios Adicionales</h3>
+                        <button onclick="closeModal('billing-rules-modal')" class="text-gray-400 hover:text-gray-600 text-3xl leading-none">&times;</button>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <svg class="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                                <div class="ml-3">
+                                    <h3 class="text-sm font-medium text-blue-800">Información Importante</h3>
+                                    <div class="mt-2 text-sm text-blue-700">
+                                        <p>Al habilitar cualquier switch estás confirmando que los cargos se realizarán en su factura además de que se proporcionó correctamente los servicios adicionales, el usuario podrá ver esto en su resumen de facturación.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex justify-end pt-4">
+                            <button onclick="closeModal('billing-rules-modal')" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                Entendido
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            modalContainer.classList.remove('hidden');
+        }
+
+        function showEnableServiceModal(clientId, addonId, checkbox) {
+            const client = adminData.clients.find(c => c.id === clientId);
+            const addon = client.subscription.addons.find(a => a.id === addonId);
+            
+            if (!client || !addon) return;
+
+            const modalContainer = document.getElementById('enable-service-modal');
+            modalContainer.innerHTML = `
+                <div class="modal-content">
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="text-xl font-semibold text-gray-900">Confirmar Servicio</h3>
+                        <button onclick="closeModal('enable-service-modal')" class="text-gray-400 hover:text-gray-600 text-3xl leading-none">&times;</button>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                                <div class="ml-3">
+                                    <h3 class="text-sm font-medium text-green-800">Confirmo que se proporcionó este servicio al usuario satisfactoriamente</h3>
+                                    <div class="mt-2 text-sm text-green-700">
+                                        <p><strong>Servicio:</strong> ${addon.name}</p>
+                                        <p><strong>Costo:</strong> ${formatCurrency(addon.cost)}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="space-y-3">
+                            <label class="block text-sm font-medium text-gray-700">
+                                Link de grabación del servicio
+                            </label>
+                            <div class="flex space-x-2">
+                                <input type="url" id="service-recording-link" placeholder="https://ejemplo.com/grabacion" class="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                                <button id="view-session-btn" onclick="viewSession()" class="px-3 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                    </svg>
+                                    Ver sesión
+                                </button>
+                            </div>
+                            <p class="text-xs text-gray-500">Ingresa el enlace a la grabación o evidencia del servicio proporcionado</p>
+                        </div>
+                        <div class="flex justify-end space-x-3 pt-4">
+                            <button onclick="closeModalWithCancel('enable-service-modal')" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                Cancelar
+                            </button>
+                            <button onclick="confirmEnableService('${clientId}', '${addonId}', this)" id="confirm-enable-btn" disabled class="px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                                Realizar cargo
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            modalContainer.classList.remove('hidden');
+
+            // Habilitar/deshabilitar botones según el campo de URL
+            const urlInput = document.getElementById('service-recording-link');
+            const confirmBtn = document.getElementById('confirm-enable-btn');
+            const viewSessionBtn = document.getElementById('view-session-btn');
+            
+            urlInput.addEventListener('input', function() {
+                const isValidUrl = this.value.trim() !== '' && this.value.startsWith('http');
+                confirmBtn.disabled = !isValidUrl;
+                viewSessionBtn.disabled = !isValidUrl;
+            });
+
+            // El botón X no se puede usar para cerrar este modal
+            const closeBtn = modalContainer.querySelector('button[onclick*="closeModal"]');
+            closeBtn.style.display = 'none';
+        }
+
+        function viewSession() {
+            const urlInput = document.getElementById('service-recording-link');
+            const url = urlInput.value.trim();
+            
+            if (url && url.startsWith('http')) {
+                window.open(url, '_blank');
+            }
+        }
+
+        function handleInvoiceUpload(invoiceId, input) {
+            const file = input.files[0];
+            if (file) {
+                // Verificar que sea un archivo .zip
+                if (!file.name.toLowerCase().endsWith('.zip')) {
+                    alert('Por favor selecciona un archivo .ZIP válido.');
+                    input.value = '';
+                    return;
+                }
+                
+                // Aquí se procesaría el archivo ZIP
+                // Por ahora solo mostramos un mensaje de confirmación
+                const action = input.id.includes('replace') ? 'reemplazado' : 'cargado';
+                alert(`Archivo "${file.name}" ${action} correctamente para la factura ${invoiceId}. El archivo contiene PDF y XML de la factura.`);
+                
+                // Limpiar el input
+                input.value = '';
+                
+                // Aquí se actualizaría el estado de la factura en el sistema
+                // Por ahora solo refrescamos la vista
+                // showClientDetail(clientId);
+            }
+        }
+
+        function confirmEnableService(clientId, addonId, button) {
+            const client = adminData.clients.find(c => c.id === clientId);
+            const addon = client.subscription.addons.find(a => a.id === addonId);
+            const recordingLink = document.getElementById('service-recording-link').value.trim();
+            
+            if (!client || !addon || !recordingLink) return;
+
+            // Habilitar el billing del addon
+            addon.billingEnabled = true;
+            addon.recordingLink = recordingLink;
+            
+            alert(`Servicio "${addon.name}" habilitado para cobro. Link de grabación: ${recordingLink}`);
+            closeModal('enable-service-modal');
+            
+            // Refrescar la vista del detalle del cliente
+            showClientDetail(clientId);
+        }
+
+        function toggleAddonBilling(clientId, addonId, checkbox) {
+            const isChecked = checkbox.checked;
+            const toggle = checkbox.nextElementSibling;
+            const dot = toggle.querySelector('div:last-child');
+            
+            if (isChecked) {
+                toggle.classList.remove('bg-gray-600');
+                toggle.classList.add('bg-indigo-600');
+                dot.style.transform = 'translateX(100%)';
+            } else {
+                toggle.classList.remove('bg-indigo-600');
+                toggle.classList.add('bg-gray-600');
+                dot.style.transform = 'translateX(0)';
+            }
+            
+            console.log(`Addon ${addonId} billing ${isChecked ? 'enabled' : 'disabled'} for client ${clientId}`);
+        }
         
-        function closeModal(modalId) { document.getElementById(modalId).classList.add('hidden'); }
+        function closeModal(modalId) {
+            // Verificación especial para el modal de servicios
+            if (modalId === 'enable-service-modal') {
+                const urlInput = document.getElementById('service-recording-link');
+                if (urlInput && urlInput.value.trim() === '') {
+                    alert('Debes ingresar el link de grabación del servicio antes de cerrar.');
+                    return;
+                }
+            }
+            document.getElementById(modalId).classList.add('hidden');
+        }
+
+        function closeModalWithCancel(modalId) {
+            // Función especial para cerrar modal con el botón cancelar
+            document.getElementById(modalId).classList.add('hidden');
+        }
+
+        function toggleBillingCycle() {
+            const switchElement = document.getElementById('billing-cycle-switch');
+            const isAnnual = switchElement.checked;
+            const monthlyPrices = document.querySelectorAll('.monthly-price');
+            const annualPrices = document.querySelectorAll('.annual-price');
+            
+            if (isAnnual) {
+                monthlyPrices.forEach(price => price.classList.add('hidden'));
+                annualPrices.forEach(price => price.classList.remove('hidden'));
+            } else {
+                monthlyPrices.forEach(price => price.classList.remove('hidden'));
+                annualPrices.forEach(price => price.classList.add('hidden'));
+            }
+        }
 
         // --- NAVIGATION & VIEW SWITCH LOGIC ---
         function switchContent(targetId, linkElement, viewSuffix) {
@@ -291,13 +1072,30 @@
              document.getElementById(viewSuffix === '-admin' ? 'admin-page-title' : 'page-title').textContent = linkElement.textContent.trim();
         }
 
-        document.getElementById('view-switch').addEventListener('change', function() {
-            const isChecked = this.checked;
+        function syncViewSwitches() {
+            const clientContainer = document.getElementById('client-view-container');
+            const adminContainer = document.getElementById('admin-view-container');
+            const isAdminView = !adminContainer.classList.contains('hidden');
+            
+            // Sincronizar switch de vista cliente
+            const clientSwitch = document.getElementById('view-switch');
+            if (clientSwitch) {
+                clientSwitch.checked = isAdminView;
+            }
+            
+            // Sincronizar switch de vista admin
+            const adminSwitch = document.getElementById('admin-view-switch');
+            if (adminSwitch) {
+                adminSwitch.checked = isAdminView;
+            }
+        }
+
+        function switchToView(isAdminView) {
             const clientContainer = document.getElementById('client-view-container');
             const adminContainer = document.getElementById('admin-view-container');
             const body = document.body;
 
-            if (isChecked) {
+            if (isAdminView) {
                 clientContainer.classList.add('hidden');
                 adminContainer.classList.remove('hidden');
                 body.classList.remove('client-view');
@@ -308,6 +1106,17 @@
                 body.classList.add('client-view');
                 body.classList.remove('admin-view');
             }
+            
+            // Sincronizar ambos switches
+            syncViewSwitches();
+        }
+
+        document.getElementById('view-switch').addEventListener('change', function() {
+            switchToView(this.checked);
+        });
+
+        document.getElementById('admin-view-switch').addEventListener('change', function() {
+            switchToView(this.checked);
         });
 
         // --- INITIALIZATION ---
@@ -318,6 +1127,9 @@
             document.querySelectorAll('#client-view-container .sidebar-link').forEach(link => { link.addEventListener('click', (e) => { e.preventDefault(); switchContent(e.currentTarget.dataset.target, e.currentTarget, ''); }); });
             document.querySelectorAll('#admin-view-container .sidebar-link').forEach(link => { link.addEventListener('click', (e) => { e.preventDefault(); switchContent(e.currentTarget.dataset.targetAdmin, e.currentTarget, '-admin'); }); });
             document.querySelectorAll('.modal-backdrop').forEach(modal => { modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(modal.id); }); });
+            
+            // Sincronizar switches al cargar la página
+            syncViewSwitches();
         });
     </script>
 </body>
