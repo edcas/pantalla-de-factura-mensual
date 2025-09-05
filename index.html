@@ -434,7 +434,6 @@
             
             const clientsHTML = adminData.clients.map(client => {
                 const paymentDueDate = formatDate(client.billing.paymentDueDate, { day: '2-digit', month: '2-digit', year: 'numeric' });
-                const reference = client.reference;
                 const paymentStatus = getPaymentStatus(client);
                 
                 return `
@@ -449,7 +448,6 @@
                         </span>
                     </td>
                     <td class="p-4 whitespace-nowrap text-sm text-gray-400">${paymentDueDate}</td>
-                    <td class="p-4 whitespace-nowrap text-sm text-gray-400 font-mono">${reference}</td>
                     <td class="p-4 whitespace-nowrap text-sm">
                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${paymentStatus === 'Pagada' ? 'bg-green-200 text-green-800' : 'bg-yellow-200 text-yellow-800'}">
                             ${paymentStatus}
@@ -462,7 +460,11 @@
             container.innerHTML = `
                 <!-- Filtros -->
                 <div class="bg-gray-800 p-4 rounded-lg mb-4 border border-gray-700">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-1">Nombre Comercial</label>
+                            <input type="text" id="name-filter" placeholder="Buscar por nombre..." class="bg-gray-700 text-white px-3 py-2 rounded border border-gray-600 text-sm w-full">
+                        </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-300 mb-1">Filtrar por Status</label>
                             <select id="status-filter" class="bg-gray-700 text-white px-3 py-2 rounded border border-gray-600 text-sm w-full">
@@ -508,7 +510,6 @@
                                 <th scope="col" class="p-4 text-left text-xs font-medium uppercase tracking-wider">Número de Contacto</th>
                                 <th scope="col" class="p-4 text-left text-xs font-medium uppercase tracking-wider">Estatus</th>
                                 <th scope="col" class="p-4 text-left text-xs font-medium uppercase tracking-wider">Fecha de pago</th>
-                                <th scope="col" class="p-4 text-left text-xs font-medium uppercase tracking-wider">Referencia</th>
                                 <th scope="col" class="p-4 text-left text-xs font-medium uppercase tracking-wider">Estatus de pago</th>
                             </tr>
                         </thead>
@@ -696,7 +697,6 @@
                                 <h2 class="text-3xl font-bold text-white">${client.name}</h2>
                                 <p class="text-gray-300 mt-2">${client.email} • ${client.phone}</p>
                                 <p class="text-sm text-gray-400 mt-1">RFC: ${client.rfc}</p>
-                                <p class="text-sm text-gray-400 mt-1">Referencia única: <span class="font-mono text-blue-400">${client.reference}</span></p>
                             </div>
                         </div>
                     </div>
@@ -2026,12 +2026,16 @@
         });
 
         function applyFilters() {
+            const nameFilter = document.getElementById('name-filter').value.toLowerCase().trim();
             const statusFilter = document.getElementById('status-filter').value;
             const paymentStatusFilter = document.getElementById('payment-status-filter').value;
             const dateFromFilter = document.getElementById('date-from-filter').value;
             const dateToFilter = document.getElementById('date-to-filter').value;
             
             const filteredClients = adminData.clients.filter(client => {
+                // Filtro por nombre comercial
+                if (nameFilter && !client.name.toLowerCase().includes(nameFilter)) return false;
+                
                 // Filtro por status del cliente
                 if (statusFilter && client.status !== statusFilter) return false;
                 
@@ -2065,6 +2069,7 @@
         }
         
         function clearFilters() {
+            document.getElementById('name-filter').value = '';
             document.getElementById('status-filter').value = '';
             document.getElementById('payment-status-filter').value = '';
             document.getElementById('date-from-filter').value = '';
@@ -2085,7 +2090,6 @@
             
             const clientsHTML = clients.map(client => {
                 const paymentDueDate = formatDate(client.billing.paymentDueDate, { day: '2-digit', month: '2-digit', year: 'numeric' });
-                const reference = client.reference;
                 const paymentStatus = getPaymentStatus(client);
                 
                 return `
@@ -2100,7 +2104,6 @@
                         </span>
                     </td>
                     <td class="p-4 whitespace-nowrap text-sm text-gray-400">${paymentDueDate}</td>
-                    <td class="p-4 whitespace-nowrap text-sm text-gray-400 font-mono">${reference}</td>
                     <td class="p-4 whitespace-nowrap text-sm">
                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${paymentStatus === 'Pagada' ? 'bg-green-200 text-green-800' : 'bg-yellow-200 text-yellow-800'}">
                             ${paymentStatus}
